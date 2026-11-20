@@ -1,0 +1,45 @@
+{
+  "status": "draft",
+  "acronym": "JIT",
+  "fullForm": {
+    "en": "Just in Time"
+  },
+  "title": {
+    "en": "JIT — Just in Time",
+    "hi": "JIT — ज्ञान से निर्माण तक"
+  },
+  "category": [
+    "Policy Framework",
+    "Ecosystem Blueprint",
+    "Local Technology"
+  ],
+  "format": "Interactive portable document (HTML, CSS, JavaScript, SVG); described by the supplied references as offline-ready",
+  "version": "1.0",
+  "languages": [
+    "Hindi",
+    "English"
+  ],
+  "shortDescription": {
+    "hi": "स्थानीय ज्ञान, ऊर्जा, विनिर्माण और बाज़ार को एक सशर्त, ऑडिट-आधारित feedback loop में जोड़ने वाला पोर्टेबल नीति-ब्लूप्रिंट।",
+    "en": "A portable policy blueprint linking local knowledge, energy, manufacturing, and markets in a conditional, audit-based feedback loop."
+  },
+  "longDescription": {
+    "hi": "संदर्भ सामग्री इस प्रस्ताव में स्थानीय मेश नेटवर्क, पुस्तकालय व AI केंद्र, सामुदायिक कृषि, लैब, निर्माण केंद्र, वाणिज्यिक बाज़ार और वित्तीय प्रणाली को परस्पर जुड़े घटकों के रूप में प्रस्तुत करती है। इसमें बहु-मंजिला ज़ोनिंग, शासन-संबंधी प्रश्न, पारिस्थितिक नियम और ऑडिट लॉग का भी वर्णन है।",
+    "en": "The supplied references describe a proposal connecting local mesh networking, library and AI centres, community agriculture, laboratories, a maker centre, commercial markets, and a financial system. They also describe multi-floor zoning, governance questions, ecological rules, and an audit log."
+  },
+  "features": [
+    "Offline-ready design with embedded fallback data, according to the supplied references",
+    "Optional API/data loading",
+    "Audit log described as browser-local and CSV-import/export capable",
+    "Conditional targets and caveats called out in the supplied material"
+  ],
+  "caveats": [
+    "The supplied material describes a blueprint or conditional pilot framework, not a verified industrial system.",
+    "Financial figures and targets in the supplied material are conditional and are not guarantees or verified outcomes.",
+    "The supplied references do not provide a confirmed author, license, or project URL; these values are intentionally omitted."
+  ],
+  "editorialNote": "Per the owner's preference, the English version uses 'JIT — Just in Time' and the Hindi version uses 'JIT — ज्ञान से निर्माण तक'.",
+  "author": null,
+  "license": null,
+  "url": null
+}
