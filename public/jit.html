@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="JIT — ज्ञान से निर्माण तक: स्थानीय ज्ञान, ऊर्जा, विनिर्माण और बाज़ार का सशर्त, ऑडिट-आधारित ब्लूप्रिंट।">
+  <meta name="theme-color" content="#101725">
+  <title>JIT — ज्ञान से निर्माण तक | स्थानीय ड्राफ्ट</title>
+  <style>
+    :root { color-scheme: dark; --bg:#101725; --panel:#172235; --panel2:#1d2b40; --ink:#f2f5fa; --muted:#b9c4d5; --line:#34445c; --teal:#65e0c3; --gold:#ffd27a; --red:#ffb0a8; --max:1100px; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:18px; }
+    body { margin:0; background:radial-gradient(ellipse at 80% -10%, #263e58 0, transparent 45%),var(--bg); color:var(--ink); font:16px/1.65 system-ui,-apple-system,"Noto Sans Devanagari","Mangal",sans-serif; }
+    a { color:var(--teal); text-underline-offset:4px; }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline:3px solid var(--gold); outline-offset:3px; }
+    .wrap { width:min(var(--max),calc(100% - 36px)); margin-inline:auto; }
+    header { padding:16px 0; border-bottom:1px solid #ffffff18; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:18px; }
+    .brand { color:var(--ink); text-decoration:none; font-size:1rem; font-weight:750; }
+    .brand span { color:var(--teal); }
+    .net { display:inline-flex; align-items:center; gap:7px; padding:4px 10px; border:1px solid var(--line); border-radius:99px; color:var(--muted); font-size:.78rem; white-space:nowrap; }
+    .net::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--gold); }
+    .net.online::before { background:var(--teal); }
+    .net.offline::before { background:var(--gold); }
+    nav { display:flex; flex-wrap:wrap; gap:8px; padding:12px 0 0; }
+    nav a { padding:5px 11px; border:1px solid var(--line); border-radius:99px; color:var(--muted); font-size:.84rem; text-decoration:none; }
+    nav a:hover { border-color:var(--teal); color:var(--teal); }
+    main { padding-bottom:22px; }
+    .hero { padding:54px 0 28px; }
+    .eyebrow { color:var(--teal); font-size:.82rem; font-weight:750; letter-spacing:.08em; }
+    h1 { max-width:850px; margin:10px 0 12px; font-size:clamp(2rem,5.5vw,3.55rem); line-height:1.17; letter-spacing:-.025em; }
+    h2 { margin:0 0 12px; font-size:clamp(1.5rem,3vw,2rem); line-height:1.25; }
+    h3 { margin:0 0 7px; font-size:1.06rem; line-height:1.35; }
+    .lead { max-width:800px; color:var(--muted); font-size:1.08rem; }
+    .subline { color:var(--muted); font-size:.92rem; }
+    section { padding:30px 0; border-top:1px solid #ffffff12; }
+    .intro { max-width:800px; margin:0 0 18px; color:var(--muted); }
+    .notice { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; padding:16px 18px; border:1px solid #ffd27a80; border-left:5px solid var(--gold); border-radius:12px; background:#4c3d1d3d; }
+    .notice p { margin:0; color:#f3e5c5; }
+    .notice strong { color:#ffe3a4; }
+    .grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:13px; }
+    .grid.two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .card { padding:17px; border:1px solid var(--line); border-radius:15px; background:linear-gradient(150deg,#1b2940,#151f30); }
+    .card p { margin:.35rem 0 0; color:var(--muted); }
+    .card .num { display:inline-block; margin-bottom:7px; color:var(--teal); font-size:.82rem; font-weight:800; letter-spacing:.04em; }
+    .tag { display:inline-block; margin-top:10px; padding:3px 9px; border:1px solid #ffd27a66; border-radius:99px; background:#ffd27a12; color:#ffe3a4; font-size:.75rem; }
+    .zone { display:grid; grid-template-columns:115px 1fr; gap:16px; align-items:start; padding:16px 18px; margin:10px 0; border:1px solid var(--line); border-radius:14px; background:var(--panel); }
+    .floor { color:var(--teal); font-weight:750; }
+    .zone p { margin:0; color:var(--muted); }
+    .questions { counter-reset:question; }
+    .question { position:relative; padding-left:51px; min-height:72px; }
+    .question::before { counter-increment:question; content:counter(question); position:absolute; left:16px; top:17px; display:grid; place-items:center; width:25px; height:25px; border-radius:50%; background:#65e0c31a; color:var(--teal); font-weight:800; }
+    .rules { margin:0; padding-left:1.4rem; color:var(--muted); }
+    .rules li { padding:6px 0; }
+    .veto { margin-top:15px; border-left:5px solid var(--red); background:#481f273d; }
+    .veto h3 { color:#ffd2cd; }
+    .veto p { color:#f1d8d5; }
+    .form-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:11px; }
+    label { display:flex; flex-direction:column; gap:4px; color:var(--muted); font-size:.84rem; }
+    input, select, textarea { width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:8px; background:#101725; color:var(--ink); font:inherit; font-size:.9rem; }
+    textarea { min-height:80px; resize:vertical; }
+    .actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:13px; }
+    button { padding:8px 13px; border:1px solid var(--teal); border-radius:8px; background:var(--teal); color:#09201c; font:inherit; font-size:.84rem; font-weight:750; cursor:pointer; }
+    button.secondary { background:transparent; color:var(--teal); }
+    button.danger { border-color:#ff8b83; background:#ff8b83; color:#290b09; }
+    button.small-btn { padding:4px 8px; font-size:.75rem; }
+    .small { color:var(--muted); font-size:.86rem; }
+    .status { min-height:1.5em; margin:.65rem 0 0; color:var(--muted); font-size:.85rem; }
+    .table-wrap { margin-top:12px; overflow-x:auto; border:1px solid var(--line); border-radius:10px; }
+    table { width:100%; min-width:900px; border-collapse:collapse; font-size:.81rem; }
+    th, td { padding:9px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:var(--teal); font-size:.73rem; font-weight:750; white-space:nowrap; }
+    td { color:var(--muted); }
+    tbody tr:last-child td { border-bottom:0; }
+    .empty { padding:14px; color:var(--muted); text-align:center; }
+    .code { padding:14px; overflow:auto; border:1px solid var(--line); border-radius:10px; background:#0b111d; color:#dce7f5; font: .8rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .api-row { display:grid; grid-template-columns:1fr auto; gap:9px; align-items:end; }
+    .econ { border-color:#ffd27a70; }
+    footer { padding:22px 0 36px; border-top:1px solid #ffffff18; color:var(--muted); font-size:.87rem; }
+    @media (max-width:850px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .form-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:600px) { .wrap { width:min(var(--max),calc(100% - 26px)); } .topbar { align-items:flex-start; } nav { gap:6px; } nav a { padding:5px 8px; font-size:.78rem; } .hero { padding-top:38px; } .grid, .grid.two, .form-grid { grid-template-columns:1fr; } .zone { grid-template-columns:1fr; gap:3px; } .api-row { grid-template-columns:1fr; } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } * { animation:none!important; transition:none!important; } }
+    @media print { :root { color-scheme:light; --ink:#111827; --muted:#374151; --line:#cbd5e1; } body { background:#fff; color:#111827; } header, .card, .zone, .code { background:#fff; } nav, .actions, #apiUrl, #loadApi, #auditForm, .delete-col { display:none!important; } section { break-inside:avoid; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <a class="brand" href="index.html">← Te'oM <span>v1.0</span></a>
+        <span class="net" id="netBadge" role="status" aria-live="polite">नेटवर्क जाँच रहे हैं…</span>
+      </div>
+      <nav aria-label="JIT पेज नेविगेशन">
+        <a href="#overview">अवलोकन</a>
+        <a href="#pillars">8 स्तंभ</a>
+        <a href="#zoning">ज़ोनिंग</a>
+        <a href="#governance">शासन व पारिस्थितिकी</a>
+        <a href="#audit">ऑडिट लॉग</a>
+        <a href="#data">डेटा / API</a>
+        <a href="#economics">आर्थिक उदाहरण</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" id="overview" style="border-top:0">
+      <div class="eyebrow">स्थानीय वेबसाइट ड्राफ्ट · Blueprint / सशर्त पायलट रूपरेखा</div>
+      <h1>JIT — ज्ञान से निर्माण तक</h1>
+      <p class="subline"><strong>English version:</strong> JIT — Just in Time</p>
+      <p class="lead">स्थानीय ज्ञान, ऊर्जा, विनिर्माण और बाज़ार को एक प्रस्तावित, ऑडिट-आधारित feedback loop में जोड़ने का विचार। संदर्भ सामग्री इसे offline-ready portable document के रूप में बताती है; यह पेज उस प्रस्ताव का संक्षिप्त, अलग परिचय है।</p>
+      <aside class="notice" aria-label="महत्वपूर्ण सीमा">
+        <span aria-hidden="true">!</span>
+        <p><strong>स्थिति और दावों की सीमा:</strong> यह प्रस्तावित ढाँचा है, प्रमाणित औद्योगिक प्रणाली नहीं। संदर्भों के आर्थिक आँकड़े/लक्ष्य सशर्त और स्वतंत्र रूप से असत्यापित हैं। इस पेज में कोई लाइव API URL, लेखक या लाइसेंस नहीं जोड़ा गया है क्योंकि दिए गए संदर्भों में उनकी पुष्टि नहीं है।</p>
+      </aside>
+    </section>
+
+    <section id="pillars">
+      <h2>आठ अंतर्संबंधित स्तंभ</h2>
+      <p class="intro">संदर्भ सामग्री में ये घटक स्थानीय सूचना, सीखने, प्रयोग, उत्पादन और पुनर्निवेश के प्रस्तावित चक्र के रूप में रखे गए हैं।</p>
+      <div class="grid">
+        <article class="card"><span class="num">01 · CONNECTIVITY</span><h3>स्थानीय मेश + सैटेलाइट</h3><p>सूचना के विकेंद्रीकृत और कम-लागत प्रवाह के लिए प्रस्तावित नेटवर्क परत।</p></article>
+        <article class="card"><span class="num">02 · KNOWLEDGE</span><h3>पुस्तकालय + AI केंद्र</h3><p>अध्ययन, डिजिटल पहुँच और शैक्षणिक सहयोग का स्थानीय केंद्र।</p></article>
+        <article class="card"><span class="num">03 · COMMUNITY</span><h3>सामुदायिक केंद्र</h3><p>स्थानीय ज़रूरतें, भागीदारी और feedback जुटाने का प्रस्तावित स्थान।</p></article>
+        <article class="card"><span class="num">04 · AGRICULTURE</span><h3>कृषि + ग्रीनहाउस</h3><p>खाद्य उत्पादन और कृषि प्रयोगों के लिए सामुदायिक अवसंरचना।</p></article>
+        <article class="card"><span class="num">05 · RESEARCH</span><h3>त्रि-स्तरीय लैब</h3><p>शोध से प्रोटोटाइप तक काम करने की प्रस्तावित प्रयोगशाला व्यवस्था।</p></article>
+        <article class="card"><span class="num">06 · MAKING</span><h3>निर्माण केंद्र</h3><p>विचार और डिज़ाइन को भौतिक उत्पादों में बदलने की सुविधा।</p></article>
+        <article class="card"><span class="num">07 · MARKET</span><h3>वाणिज्यिक बाज़ार</h3><p>उत्पादों को उपयोगकर्ताओं तक पहुँचाने और संभावित राजस्व का प्रस्तावित माध्यम।</p></article>
+        <article class="card"><span class="num">08 · FINANCE</span><h3>वित्तीय प्रणाली</h3><p>पूँजी, सूक्ष्म ऋण और पारदर्शी लेखांकन को सहारा देने का प्रस्ताव।</p></article>
+      </div>
+    </section>
+
+    <section id="zoning">
+      <h2>परिसर की बहु-मंज़िला ज़ोनिंग</h2>
+      <p class="intro">यह संदर्भ में दिया गया एक वैचारिक layout है—स्थानीय भवन, सुरक्षा, अग्नि-नियम, संरचना और नियामक जाँच के बिना इसे निर्माण-निर्देश न मानें।</p>
+      <div class="zone"><div class="floor">आधार तल / बेसमेंट</div><p>पावर सेंटर, बैटरी, inverter, मेश सर्वर और जल-मल उपचार जैसी उपयोगिताएँ।</p></div>
+      <div class="zone"><div class="floor">पहली मंज़िल / भूतल</div><p>औद्योगिक निर्माण, भारी मशीनरी, logistics और औद्योगिक लैब।</p></div>
+      <div class="zone"><div class="floor">दूसरी मंज़िल</div><p>वाणिज्यिक बाज़ार, सामुदायिक केंद्र और डिजिटल भुगतान/वित्तीय सेवाएँ।</p></div>
+      <div class="zone"><div class="floor">तीसरी मंज़िल + छत</div><p>पुस्तकालय, AI केंद्र और शांत लैब; छत पर प्रस्तावित ग्रीनहाउस/फार्म, सौर ऊर्जा और सैटेलाइट एंटीना।</p></div>
+    </section>
+
+    <section id="governance">
+      <h2>शासन के पाँच सवाल</h2>
+      <p class="intro">संदर्भ में इन्हें निर्णय से पहले पूछे जाने वाले समीक्षा प्रश्नों के रूप में रखा गया है।</p>
+      <div class="grid questions two">
+        <article class="card question"><h3>क्या यह नागरिकों और पर्यावरण के लिए सुरक्षित है?</h3></article>
+        <article class="card question"><h3>क्या यह दूरसंचार, वित्तीय और पर्यावरणीय कानूनों के अनुरूप है?</h3></article>
+        <article class="card question"><h3>क्या यह दीर्घकाल में आर्थिक रूप से टिकाऊ है?</h3></article>
+        <article class="card question"><h3>क्या पर्यावरणीय लाभ और हानि मापी जा सकती है?</h3></article>
+        <article class="card question"><h3>क्या प्रमाण चरण में परिणाम सत्यापित हुए हैं?</h3></article>
+      </div>
+
+      <h2 style="margin-top:28px">सात पारिस्थितिक नियम</h2>
+      <ol class="rules">
+        <li><strong>शुद्ध संसाधन लेखांकन:</strong> पानी और ऊर्जा का हिसाब रखें।</li>
+        <li><strong>प्रदूषक भुगतान सिद्धांत:</strong> प्रदूषण की लागत उसी गतिविधि में शामिल हो जो उसे पैदा करती है।</li>
+        <li><strong>चक्रीय सामग्री:</strong> मरम्मत, पुनः उपयोग और पुनर्चक्रण को प्राथमिकता दें।</li>
+        <li><strong>जल तटस्थता:</strong> वर्षा जल और अपशिष्ट जल शोधन पर विचार करें।</li>
+        <li><strong>हरित अवसंरचना:</strong> हरित आवरण और ताप प्रबंधन शामिल करें।</li>
+        <li><strong>ई-कचरा उत्तरदायित्व:</strong> बैटरी और नेटवर्क उपकरणों का जीवनचक्र संभालें।</li>
+        <li><strong>Ecological Veto:</strong> अपरिवर्तनीय पारिस्थितिक क्षति पर परियोजना रोकने का सिद्धांत।</li>
+      </ol>
+      <article class="card veto"><h3>Ecological Veto</h3><p>प्रस्ताव के अनुसार, अपरिवर्तनीय पारिस्थितिक क्षति वाली परियोजना को केवल आर्थिक लाभ के आधार पर मंज़ूरी नहीं दी जानी चाहिए। यह इस blueprint का प्रस्तावित सुरक्षा सिद्धांत है, किसी लागू कानूनी निर्णय का विकल्प नहीं।</p></article>
+    </section>
+
+    <section id="audit">
+      <h2>स्थानीय ऑडिट लॉग</h2>
+      <p class="intro">नई प्रविष्टियाँ इसी ब्राउज़र के <code>localStorage</code> में रखी जाती हैं। वे सर्वर पर नहीं भेजी जातीं। CSV से बैकअप/आयात करें; संवेदनशील निजी जानकारी दर्ज न करें।</p>
+      <article class="card">
+        <h3>नई प्रविष्टि</h3>
+        <form id="auditForm">
+          <div class="form-grid">
+            <label>तिथि<input type="date" id="f_date" required></label>
+            <label>क्षेत्र<select id="f_area" required><option value="">चुनें…</option><option>मेश एवं सैटेलाइट नेटवर्क</option><option>पावर सेंटर</option><option>ग्रीनहाउस एवं कृषि</option><option>लैब एवं विनिर्माण</option><option>AI एवं डेटा केंद्र</option><option>वित्तीय प्रणाली</option><option>सामुदायिक केंद्र</option></select></label>
+            <label>उपयोगकर्ता / घर<input type="number" id="f_users" min="0" step="1" placeholder="0"></label>
+            <label>शुद्ध ऊर्जा अधिशेष (%)<input type="number" id="f_energy" step="0.1" placeholder="उदा. 4.5"></label>
+            <label>सक्रिय लैब<input type="number" id="f_labs" min="0" step="1" placeholder="0"></label>
+            <label>Uptime (%)<input type="number" id="f_uptime" min="0" max="100" step="0.1" placeholder="उदा. 99"></label>
+            <label>लागत (₹, तिमाही)<input type="number" id="f_cost" min="0" step="1" placeholder="0"></label>
+            <label>नोट / साक्ष्य<input type="text" id="f_note" maxlength="300" placeholder="संक्षिप्त विवरण"></label>
+          </div>
+          <div class="actions">
+            <button type="submit">प्रविष्टि जोड़ें</button>
+            <button type="button" class="secondary" id="exportCsv">CSV निर्यात</button>
+            <button type="button" class="secondary" id="importCsvBtn">CSV आयात</button>
+            <input type="file" id="importCsv" accept=".csv,text/csv" hidden>
+            <button type="button" class="danger" id="clearAll">सभी प्रविष्टियाँ हटाएँ</button>
+          </div>
+        </form>
+        <p class="small" id="storageState" role="status" aria-live="polite">स्थानीय संग्रहण की स्थिति जाँची जा रही है…</p>
+        <p class="status" id="auditStatus" role="status" aria-live="polite"></p>
+      </article>
+      <article class="card" style="margin-top:14px">
+        <h3>प्रविष्टियाँ (<span id="logCount">0</span>)</h3>
+        <div id="logTableWrap" class="table-wrap"><div class="empty">अभी कोई प्रविष्टि नहीं।</div></div>
+      </article>
+    </section>
+
+    <section id="data">
+      <h2>ऑफ़लाइन फ़ॉलबैक और वैकल्पिक API / डेटा</h2>
+      <p class="intro">पेज के मुख्य बिंदु इसमें embedded हैं, इसलिए उन्हें पढ़ने के लिए इंटरनेट ज़रूरी नहीं। संदर्भों में कोई पुष्ट live API URL नहीं दिया गया; नीचे URL खाली है और केवल वैकल्पिक, हाथ से दिया गया JSON endpoint लोड करता है।</p>
+      <div class="grid two">
+        <article class="card">
+          <h3>Embedded fallback</h3>
+          <p>यह स्थानीय फ़ॉलबैक सार है। यह स्रोत-सामग्री को व्यवस्थित करता है, दावों का स्वतंत्र सत्यापन नहीं करता।</p>
+          <pre class="code" id="dataPreview" aria-live="polite"></pre>
+        </article>
+        <article class="card">
+          <h3>वैकल्पिक JSON endpoint</h3>
+          <p class="small">URL देने पर यह पेज JSON fetch करने की कोशिश करेगा। बाहरी साइट की अनुमति/CORS और इंटरनेट आवश्यक हो सकते हैं। बाहरी JSON केवल नीचे दिखेगा—यह पेज की सामग्री या स्थानीय ऑडिट लॉग को नहीं बदलेगा।</p>
+          <div class="api-row">
+            <label for="apiUrl">JSON URL (वैकल्पिक)<input id="apiUrl" type="url" inputmode="url" placeholder="यहाँ पुष्ट endpoint डालें"></label>
+            <button type="button" id="loadApi">JSON लोड करें</button>
+          </div>
+          <p class="status" id="apiStatus" role="status" aria-live="polite">स्थिति: embedded fallback सक्रिय। कोई live endpoint पहले से सेट नहीं है।</p>
+          <h3 style="margin-top:18px">लोड किया गया JSON</h3>
+          <pre class="code" id="remotePreview">अभी कोई बाहरी JSON लोड नहीं हुआ।</pre>
+        </article>
+      </div>
+    </section>
+
+    <section id="economics">
+      <h2>आर्थिक उदाहरण और लक्ष्य — सशर्त, असत्यापित</h2>
+      <p class="intro">नीचे के उदाहरण दिए गए संदर्भों से हैं। इन्हें योजना-परिकल्पना की तरह पढ़ें, न कि मौजूदा दर, बजट, वादा या सत्यापित आर्थिक परिणाम की तरह।</p>
+      <div class="grid two">
+        <article class="card econ"><span class="num">उदाहरण / लक्ष्य 1</span><h3>नेटवर्क शुल्क: ₹0 प्रति माह</h3><p>संदर्भ इसे तभी संभव सशर्त लक्ष्य बताता है जब तिमाही ऑडिट में पर्याप्त अधिशेष दिखे। लागत, आय और अधिशेष के वास्तविक आँकड़े यहाँ सत्यापित नहीं हैं।</p><span class="tag">गारंटी नहीं · स्वतंत्र सत्यापन आवश्यक</span></article>
+        <article class="card econ"><span class="num">उदाहरण / लक्ष्य 2</span><h3>10,000 × ₹50 = ₹5 लाख</h3><p>यह संदर्भ में दिया गया एकमुश्त पंजीकरण का अंकगणितीय उदाहरण है—आवर्ती आय या पुष्ट राजस्व नहीं। 10,000 पंजीकरण और ₹50 शुल्क की धारणाएँ भी सत्यापित नहीं हैं।</p><span class="tag">काल्पनिक/सशर्त उदाहरण · गारंटी नहीं</span></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap"><strong>JIT — ज्ञान से निर्माण तक</strong> · स्थानीय ड्राफ्ट · English version: JIT — Just in Time.<br>लेखक, लाइसेंस और पुष्ट परियोजना URL संदर्भों में निर्दिष्ट नहीं थे; इसलिए यहाँ नहीं जोड़े गए।</div>
+  </footer>
+
+  <script>
+    "use strict";
+    const STORAGE_KEY = "jit_audit_log_v1";
+    const FALLBACK = {
+      version: "1.0",
+      status: "स्थानीय प्रस्ताव; स्वतंत्र रूप से सत्यापित नहीं",
+      pillars: ["स्थानीय मेश + सैटेलाइट", "पुस्तकालय + AI केंद्र", "सामुदायिक केंद्र", "कृषि + ग्रीनहाउस", "त्रि-स्तरीय लैब", "निर्माण केंद्र", "वाणिज्यिक बाज़ार", "वित्तीय प्रणाली"],
+      governance: { questions: 5, ecologicalRules: 7, ecologicalVeto: true },
+      audit: { storage: "ब्राउज़र localStorage", csvImportExport: true },
+      economicExamples: ["₹0/माह नेटवर्क शुल्क: तिमाही ऑडिट सरप्लस पर निर्भर सशर्त लक्ष्य", "10,000 × ₹50 = ₹5 लाख: सशर्त एकमुश्त उदाहरण, आवर्ती आय नहीं"],
+      api: "वैकल्पिक; पुष्ट live endpoint उपलब्ध नहीं कराया गया"
+    };
+    let memoryLog = [];
+    const $ = (selector) => document.querySelector(selector);
+
+    function loadLog() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw === null) return memoryLog.slice();
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return memoryLog.slice();
+        memoryLog = parsed;
+        return parsed.slice();
+      } catch (error) {
+        return memoryLog.slice();
+      }
+    }
+
+    function saveLog(entries) {
+      memoryLog = entries.slice();
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function makeId() {
+      return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 9);
+    }
+
+    function localDateIso() {
+      const now = new Date();
+      return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    }
+
+    function cell(value) {
+      const td = document.createElement("td");
+      td.textContent = value === undefined || value === null || value === "" ? "—" : String(value);
+      return td;
+    }
+
+    function renderLog() {
+      const entries = loadLog();
+      $("#logCount").textContent = String(entries.length);
+      const wrap = $("#logTableWrap");
+      wrap.replaceChildren();
+      if (!entries.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "अभी कोई प्रविष्टि नहीं। ऊपर के फ़ॉर्म से जोड़ें या CSV आयात करें।";
+        wrap.appendChild(empty);
+        return;
+      }
+
+      const table = document.createElement("table");
+      const head = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+      ["तिथि", "क्षेत्र", "उपयोगकर्ता", "ऊर्जा %", "लैब", "Uptime %", "लागत ₹", "नोट / साक्ष्य", "क्रिया"].forEach((name) => {
+        const th = document.createElement("th");
+        th.textContent = name;
+        headerRow.appendChild(th);
+      });
+      head.appendChild(headerRow);
+      const body = document.createElement("tbody");
+      entries.slice().reverse().forEach((entry) => {
+        const row = document.createElement("tr");
+        [entry.date, entry.area, entry.users, entry.energy, entry.labs, entry.uptime, entry.cost, entry.note].forEach((value) => row.appendChild(cell(value)));
+        const actionCell = document.createElement("td");
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "secondary small-btn";
+        del.textContent = "हटाएँ";
+        del.setAttribute("data-delete-id", String(entry.id));
+        del.setAttribute("aria-label", "यह ऑडिट प्रविष्टि हटाएँ");
+        actionCell.appendChild(del);
+        row.appendChild(actionCell);
+        body.appendChild(row);
+      });
+      table.append(head, body);
+      wrap.appendChild(table);
+    }
+
+    function csvEscape(value) {
+      let text = String(value ?? "");
+      if (/^[=+@\-]/.test(text)) text = "'" + text;
+      return '"' + text.replace(/"/g, '""') + '"';
+    }
+
+    function toCsv(entries) {
+      const columns = ["id", "date", "area", "users", "energy", "labs", "uptime", "cost", "note"];
+      return [columns.join(","), ...entries.map((entry) => columns.map((key) => csvEscape(entry[key])).join(","))].join("\r\n");
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [], value = "", quoted = false;
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        if (quoted) {
+          if (char === '"' && text[i + 1] === '"') { value += '"'; i += 1; }
+          else if (char === '"') quoted = false;
+          else value += char;
+        } else if (char === '"') {
+          quoted = true;
+        } else if (char === ",") {
+          row.push(value); value = "";
+        } else if (char === "\n") {
+          row.push(value); rows.push(row); row = []; value = "";
+        } else if (char !== "\r") {
+          value += char;
+        }
+      }
+      if (quoted) throw new Error("CSV में बंद न किया गया quoted field मिला।");
+      if (value.length || row.length) { row.push(value); rows.push(row); }
+      return rows.filter((items) => items.some((item) => item.trim() !== ""));
+    }
+
+    function importCsv(text) {
+      const rows = parseCsv(text.replace(/^\uFEFF/, ""));
+      if (!rows.length) throw new Error("CSV खाली है।");
+      const headers = rows[0].map((header) => header.trim().toLowerCase());
+      const dateIndex = headers.indexOf("date");
+      const areaIndex = headers.indexOf("area");
+      if (dateIndex < 0 || areaIndex < 0) throw new Error("CSV में date और area कॉलम होना ज़रूरी है।");
+      const current = loadLog();
+      let added = 0;
+      rows.slice(1).forEach((values) => {
+        const read = (key) => {
+          const index = headers.indexOf(key);
+          return index >= 0 ? (values[index] || "").trim() : "";
+        };
+        const date = (values[dateIndex] || "").trim();
+        const area = (values[areaIndex] || "").trim();
+        if (!date || !area) return;
+        current.push({
+          id: makeId(), date, area, users: read("users"), energy: read("energy"),
+          labs: read("labs"), uptime: read("uptime"), cost: read("cost"), note: read("note")
+        });
+        added += 1;
+      });
+      if (!added) throw new Error("date और area वाले डेटा-पंक्तियाँ नहीं मिलीं।");
+      const persisted = saveLog(current);
+      return { added, persisted };
+    }
+
+    function setNetworkBadge() {
+      const badge = $("#netBadge");
+      const online = navigator.onLine;
+      badge.textContent = online ? "ऑनलाइन · offline सामग्री उपलब्ध" : "ऑफ़लाइन · स्थानीय सामग्री सक्रिय";
+      badge.className = "net " + (online ? "online" : "offline");
+    }
+
+    function storageMessage(persisted) {
+      $("#storageState").textContent = persisted
+        ? "ऑडिट लॉग इस ब्राउज़र के localStorage में सहेजा गया है। CSV बैकअप अलग से रखें।"
+        : "localStorage उपलब्ध नहीं है; प्रविष्टियाँ केवल इस टैब की अस्थायी memory में रहेंगी। आगे बढ़ने से पहले CSV निर्यात करें, यदि सुविधा उपलब्ध हो।";
+    }
+
+    $("#auditForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const entry = {
+        id: makeId(), date: $("#f_date").value, area: $("#f_area").value,
+        users: $("#f_users").value, energy: $("#f_energy").value, labs: $("#f_labs").value,
+        uptime: $("#f_uptime").value, cost: $("#f_cost").value, note: $("#f_note").value.trim()
+      };
+      if (!entry.date || !entry.area) return;
+      const entries = loadLog();
+      entries.push(entry);
+      const persisted = saveLog(entries);
+      renderLog();
+      storageMessage(persisted);
+      $("#auditStatus").textContent = "प्रविष्टि जोड़ दी गई।";
+      form.reset();
+      $("#f_date").value = localDateIso();
+    });
+
+    $("#logTableWrap").addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-delete-id]");
+      if (!button) return;
+      const updated = loadLog().filter((entry) => String(entry.id) !== button.getAttribute("data-delete-id"));
+      const persisted = saveLog(updated);
+      renderLog();
+      storageMessage(persisted);
+      $("#auditStatus").textContent = "प्रविष्टि हटा दी गई।";
+    });
+
+    $("#exportCsv").addEventListener("click", () => {
+      const entries = loadLog();
+      if (!entries.length) { $("#auditStatus").textContent = "निर्यात के लिए कोई प्रविष्टि नहीं है।"; return; }
+      const blob = new Blob(["\uFEFF", toCsv(entries)], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "jit-audit-" + localDateIso() + ".csv";
+      document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+      $("#auditStatus").textContent = "CSV फ़ाइल निर्यात की गई।";
+    });
+
+    $("#importCsvBtn").addEventListener("click", () => $("#importCsv").click());
+    $("#importCsv").addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const result = importCsv(String(reader.result || ""));
+          renderLog();
+          storageMessage(result.persisted);
+          $("#auditStatus").textContent = result.added + " CSV प्रविष्टियाँ आयात हुईं।";
+        } catch (error) {
+          $("#auditStatus").textContent = "CSV आयात विफल: " + error.message;
+        } finally {
+          event.target.value = "";
+        }
+      };
+      reader.onerror = () => { $("#auditStatus").textContent = "CSV फ़ाइल पढ़ी नहीं जा सकी।"; event.target.value = ""; };
+      reader.readAsText(file, "utf-8");
+    });
+
+    $("#clearAll").addEventListener("click", () => {
+      if (!loadLog().length) { $("#auditStatus").textContent = "हटाने के लिए कोई प्रविष्टि नहीं है।"; return; }
+      if (!window.confirm("सभी स्थानीय ऑडिट प्रविष्टियाँ हटाएँ? यह कार्रवाई वापस नहीं होगी।")) return;
+      const persisted = saveLog([]);
+      renderLog();
+      storageMessage(persisted);
+      $("#auditStatus").textContent = "सभी ऑडिट प्रविष्टियाँ हटा दी गईं।";
+    });
+
+    $("#loadApi").addEventListener("click", async () => {
+      const rawUrl = $("#apiUrl").value.trim();
+      if (!rawUrl) { $("#apiStatus").textContent = "कोई URL नहीं दिया गया; embedded fallback सक्रिय है।"; return; }
+      let url;
+      try { url = new URL(rawUrl, window.location.href); }
+      catch (error) { $("#apiStatus").textContent = "यह URL मान्य नहीं दिखता; embedded fallback सक्रिय है।"; return; }
+      if (url.protocol !== "https:" && url.protocol !== "http:") {
+        $("#apiStatus").textContent = "केवल HTTP(S) JSON URL स्वीकार है; embedded fallback सक्रिय है।";
+        return;
+      }
+      $("#apiStatus").textContent = "JSON लोड करने की कोशिश…";
+      try {
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 8000);
+        const response = await fetch(url.href, { signal: controller.signal, cache: "no-store" });
+        window.clearTimeout(timeout);
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const json = await response.json();
+        $("#remotePreview").textContent = JSON.stringify(json, null, 2);
+        $("#apiStatus").textContent = "JSON लोड हुआ; यह बाहरी डेटा है और स्वतंत्र रूप से सत्यापित नहीं है। स्थानीय ऑडिट लॉग अप्रभावित है।";
+      } catch (error) {
+        $("#remotePreview").textContent = "अभी कोई बाहरी JSON लोड नहीं हुआ।";
+        $("#apiStatus").textContent = "लोड विफल (" + error.message + "); embedded fallback सक्रिय है।";
+      }
+    });
+
+    window.addEventListener("online", setNetworkBadge);
+    window.addEventListener("offline", setNetworkBadge);
+    $("#dataPreview").textContent = JSON.stringify(FALLBACK, null, 2);
+    $("#f_date").value = localDateIso();
+    setNetworkBadge();
+    renderLog();
+    storageMessage((() => { try { const key = "jit_storage_test"; localStorage.setItem(key, "1"); localStorage.removeItem(key); return true; } catch (error) { return false; } })());
+  </script>
+</body>
+</html>
