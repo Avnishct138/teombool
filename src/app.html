@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Te'o bool — स्पष्टता का सार</title>
+<meta name="description" content="Te\'o bool — अपना सवाल पूछो, स्पष्टता पाओ। SVG ऑरेकल, ASCII स्रोत, इंटरैक्टिव API, पता-सुरक्षित शेयर।" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Mukta:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   Te'o bool — design tokens
+   Subject: a decision-clarity companion. Deep cold night sky,
+   frosted glass, neon signal lights. One source of truth,
+   rendered twice: as an SVG prism stage and as an ASCII console.
+   ═══════════════════════════════════════════════════════════ */
+:root{
+  --abyss:#07080C;
+  --abyss-2:#0B0E16;
+  --panel:#101218;
+  --panel-2:#151821;
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.16);
+
+  --ink:#F4F7FB;
+  --ink-2:#A5AEBD;
+  --ink-3:#697283;
+
+  --signal:#2BE08A;      /* yes / active / primary action */
+  --flare:#4FA3FF;       /* emergency / info / link */
+  --amber:#F2C455;       /* the chosen one / next step */
+  --ember:#FF5C5C;       /* no / destructive */
+  --violet:#9A7BFF;      /* source / console */
+  --frost:#DCE9F7;
+
+  --r-xl:26px;
+  --r-lg:20px;
+  --r-md:14px;
+  --r-sm:10px;
+
+  --f-display:'Baloo 2','Mukta',system-ui,-apple-system,sans-serif;
+  --f-body:'Mukta','Baloo 2',system-ui,-apple-system,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --shadow-soft:0 18px 50px -18px rgba(0,0,0,.85);
+  --ease:cubic-bezier(.22,.68,.36,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--abyss);
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+button,input,textarea,select{font:inherit;color:inherit;}
+button{background:none;border:0;cursor:pointer;}
+:focus-visible{outline:2px solid var(--flare);outline-offset:2px;border-radius:6px;}
+
+/* ── ambient backdrop ─────────────────────────────────── */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+  background:
+    radial-gradient(120% 85% at 50% 0%, #0B1B34 0%, #070A12 45%, #05060A 100%);}
+.bg .orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45;}
+.orb-a{width:46vw;height:46vw;left:-8vw;top:-14vw;background:radial-gradient(circle,#1E5AA8,transparent 65%);}
+.orb-b{width:40vw;height:40vw;right:-10vw;top:18vh;background:radial-gradient(circle,#0E7C6B,transparent 65%);opacity:.32;}
+.orb-c{width:52vw;height:52vw;left:24vw;bottom:-30vw;background:radial-gradient(circle,#12406E,transparent 62%);opacity:.4;}
+.bg .grain{position:absolute;inset:0;width:100%;height:100%;opacity:.05;mix-blend-mode:overlay;}
+
+/* ── shell ─────────────────────────────────────────────── */
+.shell{position:relative;z-index:1;height:100%;display:flex;align-items:center;justify-content:center;gap:26px;padding:20px;}
+
+/* ── rail: live ASCII source console (desktop) ─────────── */
+.rail{
+  width:346px;flex:none;align-self:stretch;max-height:940px;margin:auto;
+  display:flex;flex-direction:column;gap:12px;padding:18px 16px;
+  background:linear-gradient(180deg,rgba(16,18,24,.9),rgba(10,12,18,.9));
+  border:1px solid var(--line);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-soft);backdrop-filter:blur(14px);overflow:auto;
+}
+.rail-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+.rail-title{font-family:var(--f-mono);font-size:11px;letter-spacing:.22em;color:var(--violet);text-transform:uppercase;}
+.rail-sub{font-size:11px;color:var(--ink-3);letter-spacing:.04em;}
+.rail-block{border:1px solid var(--line);border-radius:var(--r-md);background:rgba(0,0,0,.34);padding:12px 12px 10px;}
+.rail-label{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.18em;color:var(--ink-3);text-transform:uppercase;margin-bottom:8px;}
+pre.ascii{margin:0;font-family:var(--f-mono);font-size:10.5px;line-height:1.25;color:#9FE8C8;white-space:pre;overflow:hidden;letter-spacing:.02em;}
+pre.ascii.logo{color:var(--amber);font-size:9px;line-height:1.2;opacity:.95;}
+pre.ascii.log{color:var(--ink-3);font-size:9.5px;}
+.rail-window{margin-top:10px;border:1px dashed rgba(154,123,255,.4);border-radius:8px;padding:8px 10px;font-family:var(--f-mono);font-size:11px;color:var(--violet);letter-spacing:.06em;text-align:center;background:rgba(154,123,255,.07);}
+.rail-window b{display:block;font-family:var(--f-display);font-size:15px;color:var(--ink);letter-spacing:0;margin-top:3px;font-weight:700;}
+.api-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.api{display:flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:9.5px;color:var(--ink-2);letter-spacing:.02em;}
+.api i{width:6px;height:6px;border-radius:50%;background:var(--ink-3);flex:none;}
+.api.on i{background:var(--signal);box-shadow:0 0 8px var(--signal);}
+.api.off i{background:#3a4050;}
+
+/* ── device frame ──────────────────────────────────────── */
+.device{
+  position:relative;width:min(430px,100%);height:min(940px,100%);
+  background:#05070C;border-radius:34px;padding:10px;
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.95), 0 0 0 1px rgba(255,255,255,.07),
+             0 0 0 8px rgba(255,255,255,.025);
+  flex:none;
+}
+.screen{position:relative;height:100%;width:100%;border-radius:26px;overflow:hidden;background:#07080C;display:flex;flex-direction:column;}
+
+/* ── app bar ───────────────────────────────────────────── */
+.appbar{flex:none;display:flex;align-items:center;gap:10px;padding:14px 14px 10px;position:relative;z-index:4;
+  background:linear-gradient(180deg,rgba(10,12,18,.96),rgba(10,12,18,.72));backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.05);}
+.icon-btn{width:40px;height:40px;flex:none;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.06);color:var(--ink);transition:background .2s var(--ease),transform .2s var(--ease);}
+.icon-btn:hover{background:rgba(255,255,255,.12);}
+.icon-btn:active{transform:scale(.94);}
+.icon-btn.accent{background:rgba(43,224,138,.12);color:var(--signal);box-shadow:inset 0 0 0 1.5px rgba(43,224,138,.55);}
+.icon-btn.accent:hover{background:rgba(43,224,138,.2);}
+.icon-btn svg{width:20px;height:20px;}
+.appbar-title{flex:1;text-align:center;font-family:var(--f-display);font-size:19px;font-weight:700;letter-spacing:.01em;margin:0;}
+.appbar .icon-btn:last-child{margin-left:auto;}
+.appbar-title+.icon-btn{margin-left:0;}
+.appbar-title{transform:translateX(-20px);}
+@media (min-width:1000px){.appbar-title{transform:none;}}
+
+/* ── views ─────────────────────────────────────────────── */
+.views{flex:1;min-height:0;position:relative;}
+.view{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;padding:16px 16px 22px;display:none;}
+.view.active{display:block;animation:viewIn .32s var(--ease);}
+.view[data-view="chat"].active{display:flex;flex-direction:column;padding:0;}
+@keyframes viewIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* ── home ──────────────────────────────────────────────── */
+.hero-mark{display:flex;align-items:center;gap:10px;margin:2px 0 18px;}
+.hero-mark .sigil{width:34px;height:34px;flex:none;}
+.hero-copy{min-width:0;}
+.hero-copy b{display:block;font-family:var(--f-display);font-size:15px;font-weight:700;letter-spacing:.01em;}
+.hero-copy span{display:block;font-size:11.5px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase;font-family:var(--f-mono);}
+
+.cta-primary{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+  min-height:58px;border-radius:999px;background:#F4F7FB;color:#08090C;
+  font-family:var(--f-display);font-size:19px;font-weight:800;letter-spacing:.01em;
+  box-shadow:0 14px 34px -14px rgba(255,255,255,.4);transition:transform .18s var(--ease),box-shadow .18s var(--ease);
+}
+.cta-primary:hover{transform:translateY(-1px);box-shadow:0 18px 40px -14px rgba(255,255,255,.5);}
+.cta-primary:active{transform:translateY(0) scale(.985);}
+.cta-primary svg{width:20px;height:20px;}
+
+.mode-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 18px;}
+.chip{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border-radius:999px;font-size:14.5px;font-weight:600;
+  background:rgba(255,255,255,.055);color:var(--ink-2);border:1px solid transparent;transition:all .22s var(--ease);}
+.chip svg{width:17px;height:17px;}
+.chip[aria-pressed="true"]{background:rgba(79,163,255,.16);color:var(--flare);border-color:rgba(79,163,255,.45);box-shadow:0 0 22px -6px rgba(79,163,255,.55);}
+.chip[data-mode="daily"][aria-pressed="true"]{background:rgba(255,255,255,.09);color:var(--ink);border-color:var(--line-2);box-shadow:none;}
+
+.cards{display:flex;flex-direction:column;gap:11px;}
+.card{display:flex;align-items:center;gap:13px;padding:14px;border-radius:var(--r-lg);background:var(--panel);border:1px solid var(--line);text-align:left;width:100%;transition:border-color .22s var(--ease),transform .18s var(--ease),background .22s var(--ease);}
+.card:hover{border-color:var(--line-2);transform:translateY(-1px);}
+.card .ico{width:44px;height:44px;flex:none;border-radius:50%;display:grid;place-items:center;background:rgba(79,163,255,.16);color:var(--flare);}
+.card .ico svg{width:21px;height:21px;}
+.card .ico.green{background:rgba(43,224,138,.16);color:var(--signal);}
+.card .txt{flex:1;min-width:0;}
+.card .txt b{display:block;font-family:var(--f-display);font-size:16.5px;font-weight:700;}
+.card .txt span{display:block;font-size:13px;color:var(--ink-3);line-height:1.4;}
+.card .chev{flex:none;color:var(--ink-3);}
+.card .chev svg{width:18px;height:18px;}
+.card.live{border-color:rgba(43,224,138,.5);box-shadow:0 0 26px -12px rgba(43,224,138,.6);}
+.badge{flex:none;min-width:26px;height:26px;padding:0 8px;border-radius:999px;display:grid;place-items:center;background:var(--signal);color:#04140C;font-size:13px;font-weight:700;font-family:var(--f-mono);}
+
+.sec-label{font-size:12.5px;color:var(--ink-3);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:22px 0 10px;display:flex;align-items:center;gap:8px;}
+.sec-label::after{content:"";flex:1;height:1px;background:var(--line);}
+
+.thread-mini{display:flex;flex-direction:column;gap:8px;}
+.thread-mini .t{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--r-md);background:var(--panel);border:1px solid var(--line);text-align:left;width:100%;}
+.thread-mini .t .q{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.thread-mini .t .v{font-family:var(--f-mono);font-size:10px;color:var(--ink-3);letter-spacing:.08em;flex:none;}
+
+/* ── chat ──────────────────────────────────────────────── */
+.chat-scroll{flex:1;min-height:0;overflow-y:auto;padding:16px 14px 8px;display:flex;flex-direction:column;gap:14px;}
+.msg{max-width:88%;}
+.msg.user{align-self:flex-end;}
+.msg.bot{align-self:flex-start;width:100%;max-width:100%;}
+.bubble-user{background:linear-gradient(140deg,#1E5AA8,#16417C);border-radius:18px 18px 5px 18px;padding:11px 14px;font-size:15px;line-height:1.45;box-shadow:0 12px 26px -16px rgba(30,90,168,.9);}
+.msg-label{font-size:11px;color:var(--ink-3);letter-spacing:.12em;text-transform:uppercase;font-family:var(--f-mono);margin:0 0 6px 4px;}
+.typing{display:flex;gap:5px;align-items:center;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:18px;width:max-content;}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--ink-3);animation:blink 1.2s infinite;}
+.typing i:nth-child(2){animation-delay:.18s;} .typing i:nth-child(3){animation-delay:.36s;}
+@keyframes blink{0%,60%,100%{opacity:.25;transform:translateY(0);}30%{opacity:1;transform:translateY(-3px);}}
+
+/* oracle stage */
+.oracle-card{position:relative;border-radius:var(--r-xl);overflow:hidden;border:1px solid rgba(255,255,255,.12);
+  background:
+    radial-gradient(130% 62% at 50% 2%, rgba(255,255,255,.10), transparent 62%),
+    linear-gradient(180deg,#07142A 0%,#0E2C55 38%,#17508F 74%,#1E63A8 100%);
+  box-shadow:0 26px 60px -30px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.08);}
+.oracle-stage{display:block;width:100%;height:auto;}
+.oracle-card .motes{position:absolute;inset:0;pointer-events:none;}
+.oracle-card .motes i{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.55);animation:drift linear infinite;opacity:.5;}
+@keyframes drift{0%{transform:translateY(0);opacity:0;}12%{opacity:.6;}88%{opacity:.45;}100%{transform:translateY(-120px);opacity:0;}}
+.verdict{padding:15px 16px 17px;text-align:center;border-top:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(4,7,14,.55),rgba(4,7,14,.94));}
+.verdict .tone{font-family:var(--f-mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-3);}
+.verdict .hi{font-family:var(--f-display);font-size:27px;font-weight:800;line-height:1.15;margin:4px 0 2px;}
+.verdict .en{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;color:var(--ink-2);}
+
+/* summary blocks */
+.sum{margin-top:14px;display:flex;flex-direction:column;gap:12px;}
+.block{border-radius:var(--r-lg);padding:15px 16px;border:1px solid var(--line);background:var(--panel);}
+.block.state{border-color:rgba(242,196,85,.38);background:linear-gradient(180deg,rgba(242,196,85,.09),rgba(16,18,24,.9));box-shadow:0 0 30px -18px rgba(242,196,85,.8);}
+.block.opt{border-color:rgba(79,163,255,.34);background:linear-gradient(180deg,rgba(79,163,255,.07),rgba(16,18,24,.9));}
+.block.next{border-color:rgba(242,196,85,.42);background:linear-gradient(180deg,rgba(242,196,85,.11),rgba(16,18,24,.92));box-shadow:0 0 34px -20px rgba(242,196,85,.9);}
+.block .k{font-size:13px;font-weight:700;letter-spacing:.06em;margin-bottom:8px;}
+.block.state .k{color:var(--amber);} .block.opt .k{color:var(--flare);} .block.next .k{color:var(--amber);}
+.opt .k{font-size:13.5px;font-weight:700;color:var(--flare);margin-bottom:2px;letter-spacing:.04em;}
+.block .body{font-size:14.5px;line-height:1.62;color:var(--ink);}
+.opt + .opt{margin-top:12px;}
+.opt .title{font-family:var(--f-display);font-size:19px;font-weight:700;line-height:1.3;margin-bottom:4px;}
+.opt .why{font-size:13px;color:var(--ink-2);margin-bottom:10px;}
+.pc{margin:0 0 9px;padding:0;list-style:none;}
+.pc li{position:relative;padding-left:26px;font-size:14px;line-height:1.5;margin-bottom:6px;}
+.pc li::before{position:absolute;left:0;top:0;font-weight:700;font-family:var(--f-mono);font-size:14px;}
+.pc.pro li::before{content:"+";color:var(--signal);}
+.pc.con li::before{content:"−";color:var(--ember);}
+.pc li:last-child{margin-bottom:0;}
+.rule{height:1px;background:var(--line);margin:11px 0;}
+
+.ask-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-lg);background:var(--panel);border:1px solid var(--line);text-align:left;width:100%;}
+.ask-card .ico{width:38px;height:38px;flex:none;border-radius:12px;display:grid;place-items:center;background:rgba(79,163,255,.16);color:var(--flare);}
+.ask-card .ico svg{width:19px;height:19px;}
+.ask-card .txt{flex:1;min-width:0;}
+.ask-card .txt b{display:block;font-family:var(--f-display);font-size:15.5px;}
+.ask-card .txt span{display:block;font-size:12.5px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ask-card .chev{color:var(--ink-3);flex:none;}
+.ask-card .chev svg{width:18px;height:18px;}
+
+.confirm{width:100%;min-height:56px;border-radius:999px;background:#F4F7FB;color:#08090C;font-family:var(--f-display);font-size:18px;font-weight:800;margin-top:14px;transition:transform .18s var(--ease);}
+.confirm:active{transform:scale(.985);}
+.confirm.done{background:rgba(43,224,138,.16);color:var(--signal);box-shadow:inset 0 0 0 1.5px rgba(43,224,138,.5);}
+
+/* composer */
+.composer{flex:none;padding:10px 12px 12px;border-top:1px solid rgba(255,255,255,.06);background:linear-gradient(0deg,rgba(10,12,18,.98),rgba(10,12,18,.8));backdrop-filter:blur(10px);}
+.composer-row{display:flex;align-items:flex-end;gap:9px;background:var(--panel-2);border:1px solid var(--line);border-radius:22px;padding:6px 6px 6px 15px;}
+.composer textarea{flex:1;min-width:0;resize:none;border:0;background:none;outline:none;max-height:110px;padding:9px 0;font-size:15px;line-height:1.4;}
+.composer textarea::placeholder{color:var(--ink-3);}
+.mic{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;color:var(--ink-3);transition:all .2s var(--ease);}
+.mic svg{width:20px;height:20px;}
+.mic:hover{background:rgba(255,255,255,.07);color:var(--ink);}
+.mic.on{background:rgba(255,92,92,.18);color:var(--ember);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,92,92,.4);}50%{box-shadow:0 0 0 8px rgba(255,92,92,0);}}
+.send{width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--signal);color:#04140C;transition:transform .18s var(--ease),opacity .2s;}
+.send svg{width:19px;height:19px;}
+.send:disabled{opacity:.32;cursor:not-allowed;}
+.send:not(:disabled):active{transform:scale(.92);}
+.voice-hint{padding:6px 14px 0;font-size:12px;color:var(--ember);display:none;}
+.voice-hint.on{display:block;}
+
+/* ── topics ────────────────────────────────────────────── */
+.topic-note{font-size:13.5px;color:var(--ink-2);line-height:1.6;margin:0 0 18px;}
+.topic-note b{color:var(--ink);}
+.tlist{display:flex;flex-direction:column;gap:12px;}
+.topic{border-radius:var(--r-lg);border:1.5px solid var(--line);background:var(--panel);overflow:hidden;}
+.topic.active{border-color:rgba(43,224,138,.55);box-shadow:0 0 30px -16px rgba(43,224,138,.9);}
+.topic-top{display:flex;align-items:flex-start;gap:11px;padding:14px 14px 12px;}
+.topic-top .main{flex:1;min-width:0;}
+.topic-top .main b{display:block;font-family:var(--f-display);font-size:16.5px;line-height:1.35;}
+.topic-top .main span{display:block;font-size:12.5px;color:var(--ink-3);margin-top:3px;}
+.topic-top .mark{flex:none;display:flex;align-items:center;gap:8px;margin-top:3px;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--signal);box-shadow:0 0 10px var(--signal);}
+.topic-actions{display:flex;align-items:center;gap:6px;padding:10px 12px;border-top:1px solid var(--line);flex-wrap:wrap;}
+.taction{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--ink-2);background:rgba(255,255,255,.05);transition:all .18s var(--ease);}
+.taction svg{width:15px;height:15px;}
+.taction:hover{background:rgba(255,255,255,.1);color:var(--ink);}
+.taction.danger{color:var(--ember);}
+.taction.danger:hover{background:rgba(255,92,92,.14);}
+.tsum{display:flex;align-items:center;gap:8px;margin:0 12px 12px;padding:9px 11px;border-radius:var(--r-md);background:rgba(43,224,138,.1);border:1px solid rgba(43,224,138,.28);font-size:12.5px;color:var(--ink-2);}
+.tsum svg{width:16px;height:16px;color:var(--signal);flex:none;}
+.tsum b{color:var(--ink);font-weight:600;}
+
+/* ── source view ───────────────────────────────────────── */
+.src-note{font-size:13.5px;color:var(--ink-2);line-height:1.6;margin:0 0 14px;}
+.src-note b{color:var(--ink);}
+.src-block{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--panel);padding:13px;margin-bottom:12px;}
+.src-block .lb{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;color:var(--violet);text-transform:uppercase;margin-bottom:10px;}
+.rack-list{display:flex;flex-direction:column;gap:3px;font-family:var(--f-mono);font-size:11px;}
+.rack-list div{display:flex;align-items:center;gap:9px;padding:4px 6px;border-radius:6px;color:var(--ink-2);}
+.rack-list div.hit{background:rgba(242,196,85,.13);color:var(--amber);}
+.rack-list div .g{width:16px;text-align:center;}
+.rack-list div .n{flex:1;}
+.rack-list div .t{font-size:9.5px;letter-spacing:.1em;color:var(--ink-3);}
+.rack-list div.hit .t{color:var(--amber);}
+
+/* ── settings ──────────────────────────────────────────── */
+.srow{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);}
+.srow:last-child{border-bottom:0;}
+.srow .txt{flex:1;min-width:0;}
+.srow .txt b{display:block;font-family:var(--f-display);font-size:15.5px;}
+.srow .txt span{display:block;font-size:12.5px;color:var(--ink-3);}
+.sw{width:48px;height:28px;flex:none;border-radius:999px;background:rgba(255,255,255,.12);position:relative;transition:background .22s var(--ease);}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .22s var(--ease);}
+.sw[aria-checked="true"]{background:var(--signal);}
+.sw[aria-checked="true"]::after{transform:translateX(20px);}
+.btn-ghost{width:100%;padding:13px;border-radius:var(--r-md);border:1px solid var(--line);color:var(--ink-2);font-size:14px;font-weight:600;margin-top:14px;}
+.btn-ghost:hover{background:rgba(255,255,255,.05);color:var(--ink);}
+.btn-ghost.danger{color:var(--ember);border-color:rgba(255,92,92,.3);}
+
+/* ── tab bar ───────────────────────────────────────────── */
+.tabbar{flex:none;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:8px 6px 12px;border-top:1px solid rgba(255,255,255,.06);background:rgba(6,8,13,.96);backdrop-filter:blur(12px);}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px;border-radius:12px;color:var(--ink-3);transition:color .2s var(--ease),background .2s var(--ease);}
+.tab svg{width:21px;height:21px;}
+.tab span{font-size:10.5px;font-weight:600;letter-spacing:.02em;}
+.tab[aria-selected="true"]{color:var(--ink);background:rgba(255,255,255,.06);}
+.tab[aria-selected="true"] svg{filter:drop-shadow(0 0 8px rgba(255,255,255,.35));}
+
+/* ── loader ────────────────────────────────────────────── */
+.loader{position:absolute;inset:0;z-index:20;display:none;place-items:center;text-align:center;padding:30px;
+  background:rgba(4,6,11,.72);backdrop-filter:blur(9px);border-radius:26px;}
+.loader.on{display:grid;animation:fadeIn .3s var(--ease);}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.loader .lbl{font-family:var(--f-display);font-size:21px;font-weight:700;margin-top:14px;}
+.loader .pct{font-family:var(--f-display);font-size:66px;font-weight:800;line-height:1;margin:14px 0 18px;letter-spacing:-.02em;}
+.loader .bar{width:min(300px,80%);height:8px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden;margin:0 auto;}
+.loader .bar i{display:block;height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#3D8BFF,#F2C455);transition:width .28s var(--ease);box-shadow:0 0 14px rgba(242,196,85,.5);}
+.loader .quote{font-size:13.5px;color:var(--ink-2);margin-top:20px;max-width:300px;line-height:1.6;}
+.loader .status{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;color:var(--ink-3);margin-top:10px;text-transform:uppercase;}
+
+/* ── identity chip ───────────────────────────────────────── */
+.uid-chip{margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;
+  background:rgba(154,123,255,.12);box-shadow:inset 0 0 0 1px rgba(154,123,255,.34);color:var(--violet);
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;white-space:nowrap;transition:background .2s var(--ease);}
+.uid-chip:hover{background:rgba(154,123,255,.2);}
+.uid-chip .i{font-size:13px;line-height:1;}
+.uid-chip .id{color:var(--ink);}
+
+/* ── share sheet ─────────────────────────────────────────── */
+.sheet{position:absolute;inset:0;z-index:30;display:none;align-items:flex-end;justify-content:center;
+  background:rgba(4,6,11,.76);backdrop-filter:blur(8px);border-radius:26px;}
+.sheet.on{display:flex;animation:fadeIn .22s var(--ease);}
+.sheet-inner{width:100%;max-height:90%;overflow-y:auto;background:linear-gradient(180deg,#141720,#0C0E14);
+  border:1px solid var(--line-2);border-radius:24px 24px 0 0;padding:18px 16px 20px;box-shadow:0 -20px 60px -20px #000;
+  animation:sheetUp .3s var(--ease);}
+@keyframes sheetUp{from{transform:translateY(28px);opacity:.4;}to{transform:none;opacity:1;}}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.sheet-head b{font-family:var(--f-display);font-size:19px;font-weight:700;}
+.sheet-close{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.07);display:grid;place-items:center;color:var(--ink-2);}
+.sheet-close svg{width:17px;height:17px;}
+.sheet-label{font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:14px 0 7px;}
+.sheet-row{display:flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 12px;}
+.sheet-row code{flex:1;min-width:0;font-family:var(--f-mono);font-size:12.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sheet-row code.amber{color:var(--amber);}
+.mini{width:34px;height:34px;flex:none;border-radius:9px;background:rgba(255,255,255,.07);display:grid;place-items:center;color:var(--ink-2);}
+.mini:hover{background:rgba(255,255,255,.13);color:var(--ink);}
+.mini svg{width:16px;height:16px;}
+.sheet-list{display:flex;flex-direction:column;gap:6px;max-height:150px;overflow-y:auto;}
+.pick{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;background:var(--panel);
+  border:1px solid var(--line);font-size:13.5px;width:100%;text-align:left;color:var(--ink-2);}
+.pick[aria-pressed="true"]{border-color:rgba(43,224,138,.55);color:var(--ink);background:rgba(43,224,138,.08);}
+.pick .q{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pick .v{font-family:var(--f-mono);font-size:9.5px;color:var(--ink-3);flex:none;}
+.sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px;}
+.sheet-actions button{min-height:48px;border-radius:999px;font-family:var(--f-display);font-size:15px;font-weight:700;cursor:pointer;
+  background:#F4F7FB;color:#08090C;border:0;}
+.sheet-actions button.ghost{background:rgba(255,255,255,.07);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);}
+.sheet-note{font-size:12px;color:var(--ink-3);margin-top:12px;line-height:1.5;}
+.sheet-note b{color:var(--ink-2);}
+.addr-input{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  font-family:var(--f-mono);letter-spacing:.14em;outline:none;color:var(--ink);min-width:0;}
+.addr-input:focus{border-color:var(--flare);}
+
+/* ── toast ─────────────────────────────────────────────── */
+.toast{position:absolute;left:50%;bottom:86px;transform:translate(-50%,16px);z-index:40;opacity:0;pointer-events:none;
+  padding:11px 17px;border-radius:999px;background:rgba(16,18,24,.97);border:1px solid var(--line-2);color:var(--ink);
+  font-size:13.5px;font-weight:600;box-shadow:0 18px 40px -18px #000;transition:opacity .25s var(--ease),transform .25s var(--ease);max-width:86%;text-align:center;}
+.toast.on{opacity:1;transform:translate(-50%,0);}
+.toast.good{border-color:rgba(43,224,138,.5);color:var(--signal);}
+
+/* ── responsive ────────────────────────────────────────── */
+@media (max-width:1080px){ .rail{display:none;} }
+@media (max-width:600px){
+  .shell{padding:0;}
+  .device{width:100%;height:100%;border-radius:0;padding:0;box-shadow:none;}
+  .screen{border-radius:0;}
+  .loader{border-radius:0;}
+  .appbar{padding-top:max(14px,env(safe-area-inset-top));}
+  .tabbar{padding-bottom:max(12px,env(safe-area-inset-bottom));}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <span class="orb orb-a"></span><span class="orb orb-b"></span><span class="orb orb-c"></span>
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg"><filter id="nz"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3"/></filter><rect width="100%" height="100%" filter="url(#nz)"/></svg>
+</div>
+
+<div class="shell">
+
+  <!-- ═══ ASCII SOURCE CONSOLE (desktop rail) ═══ -->
+  <aside class="rail" id="rail" aria-label="ASCII स्रोत कंसोल">
+    <div class="rail-head">
+      <div class="rail-title">ASCII SOURCE</div>
+      <div class="rail-sub">svg + ascii · one truth</div>
+    </div>
+
+    <div class="rail-block">
+      <div class="rail-label">wordmark</div>
+      <pre class="ascii logo" id="railLogo"></pre>
+    </div>
+
+    <div class="rail-block">
+      <div class="rail-label">stage render · live</div>
+      <pre class="ascii" id="railSphere"></pre>
+      <div class="rail-window" id="railWindow"><span>—</span></div>
+    </div>
+
+    <div class="rail-block">
+      <div class="rail-label">engine log</div>
+      <pre class="ascii log" id="railLog"></pre>
+    </div>
+
+    <div class="rail-block">
+      <div class="rail-label">live api surface</div>
+      <div class="api-grid" id="railApis"></div>
+    </div>
+  </aside>
+
+  <!-- ═══ DEVICE ═══ -->
+  <div class="device">
+    <div class="screen" id="screen">
+
+      <header class="appbar">
+        <button class="icon-btn" id="btnBack" aria-label="वापस जाएँ">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <h1 class="appbar-title" id="viewTitle">Te'o bool</h1>
+        <button class="icon-btn accent" id="btnShare" aria-label="साझा करें">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+        </button>
+      </header>
+
+      <main class="views" id="views">
+
+        <!-- ─── HOME ─── -->
+        <section class="view active" data-view="home">
+          <div class="hero-mark">
+            <svg class="sigil" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 2.2l1.85 6.0 6.0 1.85-6.0 1.85L12 17.9l-1.85-6.0L4.15 10.05l6.0-1.85z" fill="#F2C455"/>
+              <path d="M18.6 16.4l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z" fill="#4FA3FF"/>
+            </svg>
+            <div class="hero-copy">
+              <b>स्पष्टता पाओ</b>
+              <span>clarity engine · v1.0</span>
+            </div>
+            <button class="uid-chip" id="uidChip" title="तुम्हारा user ID — कॉपी करो">
+              <span class="i">🪪</span><span class="id" id="uidText">TB-••••-••••</span>
+            </button>
+          </div>
+
+          <button class="cta-primary" id="btnClarity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.9L20 10.8l-5.9 1.9L12 18.6l-1.9-5.9L4 10.8l6.1-1.9z"/></svg>
+            स्पष्टता पायें
+          </button>
+
+          <div class="mode-row" role="group" aria-label="क्वेरीटी मोड">
+            <button class="chip" data-mode="daily" aria-pressed="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+              डेली क्वेरीटी
+            </button>
+            <button class="chip" data-mode="emergency" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+              इमरजेंसी क्वेरीटी
+            </button>
+          </div>
+
+          <div class="cards">
+            <button class="card" id="btnVoice">
+              <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></svg></span>
+              <span class="txt"><b>वॉइस मोड</b><span>बिना हाथ लगाए स्पष्टता आफ़ करो — बोलो और सुनो</span></span>
+              <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+            </button>
+
+            <button class="card live" id="btnOpenTopics">
+              <span class="ico green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.6"/><circle cx="6" cy="18" r="2.6"/><circle cx="18" cy="12" r="2.6"/><path d="M8.5 7.2l7 3.4M8.5 16.8l7-3.4"/></svg></span>
+              <span class="txt"><b>खुले विषय</b><span>इस विषय पर फिर से लगो</span></span>
+              <span class="badge" id="topicBadge">0</span>
+              <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+            </button>
+          </div>
+
+          <div class="sec-label">पिछली बातचीत</div>
+          <div class="thread-mini" id="threadList"></div>
+        </section>
+
+        <!-- ─── CHAT ─── -->
+        <section class="view" data-view="chat">
+          <div class="chat-scroll" id="chatScroll">
+            <div id="chatThread"></div>
+          </div>
+          <div class="composer">
+            <div class="voice-hint" id="voiceHint">सुन रहा हूँ… बोलो, और बोलना बंद करने के लिए फिर से दबाओ</div>
+            <div class="composer-row">
+              <textarea id="qInput" rows="1" placeholder="अपना सवाल लिखो…"></textarea>
+              <button class="mic" id="btnMic" aria-label="वॉइस से बोलो">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>
+              </button>
+              <button class="send" id="btnSend" aria-label="भेजो" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── TOPICS ─── -->
+        <section class="view" data-view="topics">
+          <p class="topic-note">Te'o bool में जिन फ़ैसलों पर तुम सोच रहे हो—सब यहीं हैं। जो जीवित/ज़रूरी है उन्हें रखो, बाकी को आर्काइव करो।</p>
+          <div class="tlist" id="topicList"></div>
+        </section>
+
+        <!-- ─── SOURCE ─── -->
+        <section class="view" data-view="source">
+          <p class="src-note">हर फ़ैसले का एक ही स्रोत है — <b>20 वाक्य</b>। वे SVG प्रिज़्म में और ASCII कंसोल में, दोनों जगह एक जैसे दिखते हैं।</p>
+
+          <div class="src-block">
+            <div class="lb">rack · 20 वाक्य</div>
+            <div class="rack-list" id="rackList"></div>
+          </div>
+
+          <div class="src-block">
+            <div class="lb">ascii stage · current</div>
+            <pre class="ascii" id="srcStage" style="color:#9FE8C8"></pre>
+          </div>
+
+          <div class="src-block">
+            <div class="lb">api surface · detected</div>
+            <div class="api-grid" id="srcApis"></div>
+          </div>
+        </section>
+
+        <!-- ─── SETTINGS ─── -->
+        <section class="view" data-view="settings">
+          <div class="srow">
+            <div class="txt"><b>आवाज़ सुनाओ</b><span>हर फ़ैसले का निष्कर्ष बोलकर सुनाए</span></div>
+            <button class="sw" id="swSpeak" role="switch" aria-checked="false" aria-label="आवाज़ सुनाओ"></button>
+          </div>
+          <div class="srow">
+            <div class="txt"><b>ध्वनि</b><span>ऑरेकल खुलने पर हल्की घंटी</span></div>
+            <button class="sw" id="swSound" role="switch" aria-checked="true" aria-label="ध्वनि"></button>
+          </div>
+          <div class="srow">
+            <div class="txt"><b>कंपन</b><span>ज़वाब आने पर हल्का वाइब्रेशन</span></div>
+            <button class="sw" id="swHaptic" role="switch" aria-checked="true" aria-label="कंपन"></button>
+          </div>
+          <div class="srow">
+            <div class="txt"><b>हिंदी आवाज़</b><span>उपलब्ध होने पर देवनागरी वॉइस चुनो</span></div>
+            <button class="sw" id="swHindiVoice" role="switch" aria-checked="true" aria-label="हिंदी आवाज़"></button>
+          </div>
+          <div class="sec-label">पता सुरक्षा · address</div>
+          <div class="srow" style="display:block;border-bottom:0;">
+            <div class="txt" style="margin-bottom:10px"><b>इंटरफ़ेस को लॉक करो</b><span>दूसरे IP पर खुलेगा तो पता माँगेगा</span></div>
+            <div style="display:flex;gap:8px;">
+              <input id="addrInput" class="addr-input" placeholder="NEON-4821" spellcheck="false" autocomplete="off" />
+              <button class="taction" id="btnAddr" style="flex:none;height:auto;">सेट करो</button>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <button class="taction" id="btnAddrOff" style="flex:1;justify-content:center;">लॉक हटाओ</button>
+              <span id="addrState" style="font-size:12px;color:var(--ink-3);align-self:center;"></span>
+            </div>
+          </div>
+          <button class="btn-ghost danger" id="btnReset">सारा डेटा मिटाओ</button>
+        </section>
+
+      </main>
+
+      <nav class="tabbar" role="tablist" aria-label="मुख्य नेविगेशन">
+        <button class="tab" role="tab" data-tab="home" aria-selected="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>होम</span>
+        </button>
+        <button class="tab" role="tab" data-tab="chat" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6l1.9 5.9 6 1.85-6 1.85L12 18.1l-1.9-5.9-6-1.85 6-1.85z"/></svg><span>ऑरेकल</span>
+        </button>
+        <button class="tab" role="tab" data-tab="topics" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 9-9 9-9-9z"/></svg><span>विषय</span>
+        </button>
+        <button class="tab" role="tab" data-tab="source" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></svg><span>स्रोत</span>
+        </button>
+        <button class="tab" role="tab" data-tab="settings" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 12h4M12 12h8M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg><span>सेटिंग्स</span>
+        </button>
+      </nav>
+
+      <!-- ─── LOADER ─── -->
+      <div class="loader" id="loader" role="status" aria-live="polite">
+        <div>
+          <pre class="ascii logo" id="loadLogo" style="font-size:10px;color:#F2C455;opacity:.92"></pre>
+          <div class="lbl" id="loadLbl">स्पष्टता बना रहे हैं</div>
+          <div class="pct" id="loadPct">0%</div>
+          <div class="bar"><i id="loadBar"></i></div>
+          <div class="status" id="loadStatus">initialising</div>
+          <div class="quote" id="loadQuote">Te'o bool वह खोज रहा है जो सच में मायने रखता है।</div>
+        </div>
+      </div>
+
+      <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="साझा करें">
+        <div class="sheet-inner">
+          <div class="sheet-head">
+            <b>साझा करें</b>
+            <button class="sheet-close" id="sheetClose" aria-label="बंद करो">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div class="sheet-label">क्या भेजना है</div>
+          <div class="sheet-list" id="shareList"></div>
+
+          <div class="sheet-label">तुम्हारा user ID</div>
+          <div class="sheet-row">
+            <code id="sheetUid">TB-••••-••••</code>
+            <button class="mini" id="copyUid" aria-label="user ID कॉपी करो">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            </button>
+          </div>
+
+          <div class="sheet-label">शॉर्ट लिंक</div>
+          <div class="sheet-row">
+            <code id="sheetLink">बनाने के लिए नीचे दबाओ</code>
+            <button class="mini" id="copyLink" aria-label="लिंक कॉपी करो">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            </button>
+          </div>
+
+          <div class="sheet-label">पता · address (दूसरे IP के लिए)</div>
+          <div class="sheet-row">
+            <code class="amber" id="sheetAddr">—</code>
+            <button class="mini" id="copyAddr" aria-label="पता कॉपी करो">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            </button>
+          </div>
+
+          <div class="sheet-actions">
+            <button class="ghost" id="sheetMake">लिंक बनाओ</button>
+            <button id="sheetShare">साझा करो</button>
+          </div>
+          <div class="sheet-note" id="sheetNote">लिंक <b>शॉर्ट</b> होगा। जो दूसरे IP से खोलेगा, उसे पता डालना पड़ेगा — तभी शेयर खुलेगा।</div>
+        </div>
+      </div>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   1. SOURCE OF TRUTH — 20 oracle phrases
+   ═══════════════════════════════════════════════════════════ */
+const PHRASES = [
+  {en:'IT IS CERTAIN',            hi:'निश्चित है',              tone:'yes',   w:['IT IS','CERTAIN']},
+  {en:'IT IS DECIDED SO',        hi:'तय हो गया',              tone:'yes',   w:['IT IS','DECIDED','SO']},
+  {en:'WITHOUT A DOUBT',         hi:'बिना किसी शक के',        tone:'yes',   w:['WITHOUT','A DOUBT']},
+  {en:'YES DEFINITELY',          hi:'हाँ, निश्चित रूप से',    tone:'yes',   w:['YES','DEFINITELY']},
+  {en:'YOU MAY RELY ON IT',      hi:'भरोसा रख सकते हो',       tone:'yes',   w:['YOU MAY','RELY ON IT']},
+  {en:'AS I SEE IT, YES',        hi:'मेरी नज़र में हाँ है',     tone:'yes',   w:['AS I SEE','IT, YES']},
+  {en:'MOST LIKELY',             hi:'सबसे संभावित',           tone:'yes',   w:['MOST LIKELY']},
+  {en:'OUTLOOK GOOD',            hi:'आउटलुक अच्छा है',       tone:'yes',   w:['OUTLOOK','GOOD']},
+  {en:'YES',                     hi:'हाँ',                     tone:'yes',   w:['YES']},
+  {en:'SIGNS POINT TO YES',      hi:'संकेत हाँ कह रहे हैं',    tone:'yes',   w:['SIGNS POINT','TO YES']},
+  {en:'REPLY HAZY, TRY AGAIN',   hi:'जवाब धुंधला है',         tone:'maybe', w:['REPLY HAZY,','TRY AGAIN']},
+  {en:'ASK AGAIN LATER',         hi:'बाद में फिर पूछना',      tone:'maybe', w:['ASK AGAIN','LATER']},
+  {en:'BETTER NOT TELL YOU NOW', hi:'अभी ये मत बताऊं',        tone:'maybe', w:['BETTER NOT','TELL YOU','NOW']},
+  {en:'CONCENTRATE AND ASK AGAIN', hi:'एकाग्र होकर फिर पूछो',tone:'maybe', w:['CONCENTRATE','AND ASK','AGAIN']},
+  {en:'CANNOT PREDICT NOW',      hi:'अभी भविष्यवाणी नहीं',   tone:'maybe', w:['CANNOT','PREDICT NOW']},
+  {en:"DON'T COUNT ON IT",       hi:'इस पर दाँव मत लगाओ',     tone:'no',    w:["DON'T COUNT",'ON IT']},
+  {en:'VERY DOUBTFUL',           hi:'बहुत संदेह है',          tone:'no',    w:['VERY','DOUBTFUL']},
+  {en:'OUTLOOK NOT SO GOOD',     hi:'आउटलुक ठीक नहीं है',    tone:'no',    w:['OUTLOOK','NOT SO','GOOD']},
+  {en:'MY REPLY IS NO',          hi:'मेरा जवाब है — नहीं',    tone:'no',    w:['MY REPLY','IS NO']},
+  {en:'MY SOURCES SAY NO',       hi:'मेरे स्रोत कहते हैं — नहीं', tone:'no', w:['MY SOURCES','SAY NO']}
+];
+const TONE_COLOR = {yes:'#2BE08A', maybe:'#4FA3FF', no:'#FF5C5C'};
+const TONE_HI    = {yes:'स्पष्ट', maybe:'संभावित', no:'विश्वास नहीं'};
+
+/* ═══════════════════════════════════════════════════════════
+   2. SCENARIOS — curated decision frames
+   ═══════════════════════════════════════════════════════════ */
+const SCENARIOS = [
+  {
+    id:'volley', re:/volley|cricket|खेल|गेंद|बॉल|वॉलेज/i, ans:1,
+    state:'एक ही वॉलेज पर वॉलेज बढ़ते ही करेंट घटता है, क्योंकि दोनों का रिश्ता उल्टा है। यह फ़र्क वायर, प्रपुज और ब्रेकर की रेटिंग समझने में सीधे काम आता है।',
+    opts:[
+      {t:'जोसा है वैसा चलाओ', why:'सीधा और पहले में आसान हिस्सा', pros:['सीधा और पहले में आसान हिस्सा','दोनों वॉलेज पर करेंट तुरंत मिल जाता है'], cons:['परिपाथ की झकड़ियाँ और संदर्भ कोड में अलग से समझाना नहीं है']},
+      {t:'गोलाई और इक्काई स्पष्ट करो', why:'आउटपुट भी साफ़ लगेगा', pros:['आउटपुट भी साफ़ लगेगा','फ़ॉर्मूला और अर्थ समझना आसान होगा'], cons:['थोड़ा अतिरिक्त कोड लिखना पड़ेगा']}
+    ],
+    next:'विकल्प A या B — जो भी तुम्हें ७ दिन में शुरू करने जैसा लगे, वही चुनो और बातचीत आगे बढ़ाओ।',
+    follow:'बातचीत आगे बढ़ाओ! Te\'o bool तुम समस्या → फ़िरसेले → अगले कदम तक ले जाएगा।'
+  },
+  {
+    id:'coupler', re:/220|240|coupler|कप्लर|वोल्ट|voltage|switch|स्विच/i, ans:5,
+    state:'विकल्प A चुन–कोड चलाकर २२०V और २४०V पर करेंट का आउटपुट देखो। यहाँ गणना सही है क्योंकि ६०० की सीधी २२० और २४० से भाग देकर ही करेंट मिलता है, और फ़ॉर्मूला पहले से दो दशमलव तक सेट है। अगर इसी बिना चलाए छोड़ दिया गया, तो २२०V और २४०V पर करेंट का वास्तविक अंतर संख्याओं में साफ़ नहीं दिखेगा।',
+    opts:[
+      {t:'चुन–कोड सत्यापित करो', why:'बिना चलाए ऊँचा दाँव', pros:['आउटपुट और भी साफ़ लगेगा','फ़ॉर्मूला और अर्थ समझना आसान होगा'], cons:['थोड़ा अतिरिक्त कोड लिखना पड़ेगा']}
+    ],
+    next:'चुन–कोड सत्यापित करो और करेंट का आउटपुट दोनों वोल्टेज पर लिखो।'
+  },
+  {
+    id:'job', re:/job|career|नौकरी|पढ़ाई|studies|salary|वेतन|interview/i, ans:0,
+    state:'तुम्हारा सवाल दो अलग किस्म की चीज़ों को मिला रहा है — एक अवसर (नौकरी) और एक तैयारी (पढ़ाई)। जब तक दोनों का पैमाना एक नहीं होता, फ़ैसला टकराता रहता है।',
+    opts:[
+      {t:'नौकरी पक्की करो, पढ़ाई समय के साथ', why:'आज की ज़रूरत बंद करो', pros:['ज़रूरत का पैसा और भरोसा मिलता है','पढ़ाई की गति बनी रहती है'], cons:['नया काम करते समय थकान सामने आएगी']},
+      {t:'पहले पढ़ाई पूरी करो, फिर अवसर पकड़ो', why:'लंबी सोच, मज़बूत आधार', pros:['फ़ैसले की गुणवत्ता ऊँची होगी','ऑप्शन साफ़ रहेंगे'], cons:['इस बीच की अवसर बीत सकते हैं']}
+    ],
+    next:'दोनों रास्तों पर एक-एक सप्ताह का टेस्ट लिखो — कौन-सा आसान लगता है, वही पहले करो।',
+    follow:'फ़ैसले को आँकड़ों से मापो — दोनों रास्तों पर एक-एक हफ़्ते का टेस्ट करो।'
+  },
+  {
+    id:'house', re:/house|rent|घर|किराया|flat|अपार्टमेंट|buy/i, ans:6,
+    state:'यह फ़ैसला सबसे ज़्यादा कीमत के बारे में नहीं, समय के बारे में है। किराए का फ़ैसला आज का है और खरीद का फ़ैसला कई साल का।',
+    opts:[
+      {t:'किराए पर रहो, बचत इकट्ठी करो', why:'फ़्लेक्सिबिलिटी बनाए रखो', pros:['कम जोखिम, ज़्यादा आज़ादी','रिश्तों पर बोझ नहीं'], cons:['हर महीने खर्च जारी रहेगा']},
+      {t:'खरीद लो, अगर EMI तुम्हारी नौकरी को नहीं तोड़ती', why:'सब्सिडी कम, इकट्ठा पैसा', pros:['किराये का बोझ ख़त्म','संपत्ति बनती है'], cons:['EMI का बोझ पक्का हो जाएगा']}
+    ],
+    next:'दोनों हिस्सों की मासिक क़ीमत लिखो — फ़ैसला सिर्फ़ तभी पक्का है जब ऊपरी हिस्सा तुम्हें हल्का लगे।',
+    follow:'EMI को इनकम का हिस्सा मत बनाओ — पहले यह देखो कि कितना बचा असल में।'
+  },
+  {
+    id:'relation', re:/relation|रिश्ता|relationship|p breakup|breakup|love|प्यार/i, ans:11,
+    state:'इस बार सवाल "क्या करूँ" नहीं है — यह है "मैं कितना जानता हूँ"। जब तक जवाब साफ़ न हो, कोई भी फ़ैसला उतार लेना तुम्हारी जगह ले लेगा।',
+    opts:[
+      {t:'पहले ख़ुद से पूछो', why:'निर्णय का पहला कदम अंदर से', pros:['जल्दी, सस्ता, और सच्चा','किसी को नहीं दोष देना पड़ता'], cons:['अकेले में सोचना भारी लग सकता है']},
+      {t:'एक भरोसेमंद से बात करो', why:'बाहर का नज़रिया पाओ', pros:['नज़रिया साफ़ होगा','बोझ हल्का होगा'], cons:['सलाह अलग हो सकती है, भरोसा टूट सकता है']}
+    ],
+    next:'दोनों में से वो रास्ता चुनो जिसका परिणाम तुम बहुत देर तक टाल सकते हो — वही सही रास्ता है।',
+    follow:'जवाब तुम्हारा है — Te\'o bool यहाँ सिर्फ़ सवाल साफ़ करेगा।'
+  }
+];
+
+/* ═══════════════════════════════════════════════════════════
+   3. ASCII ART SOURCES
+   ═══════════════════════════════════════════════════════════ */
+/* ── wordmark: strictly 7-bit ASCII, so every glyph shares one advance
+      width in a monospace face (Google's "latin" subset ships no block
+      or box-drawing glyphs — those would fall back and misalign). ── */
+const ART = {
+  'O':[' ##### ','##   ##','##   ##','##   ##',' ##### '],
+  'L':['##     ','##     ','##     ','##     ','#######'],
+  'E':['###### ','##     ','###### ','##     ','###### '],
+  'N':['##   ##','###  ##','#### ##','##  ###','##   ##'],
+  'R':['##### ','##   ##','##### ','##  ##','##   ##'],
+  'I':['  ##  ','  ##  ','  ##  ','  ##  ','  ##  '],
+  'T':['#######','   ##  ','   ##  ','   ##  ','   ##  '],
+  'M':['##   ##','### ###','## # ##','##   ##','##   ##'],
+  'B':['##### ','##   ##','##### ','##   ##','##### ']
+};
+function wordmark(text){
+  const rows = ['','','','',''];
+  text.split('').forEach(ch=>{
+    const g = ART[ch]; if(!g) return;
+    for(let i=0;i<5;i++) rows[i] += g[i] + '  ';
+  });
+  return rows.map(r=>r.replace(/\s+$/,'')).join('\n');
+}
+/* two-line lockup — "TEOM" over "BOOL" */
+function lockup(top, bottom){
+  const rowsOf = (t)=>{ const rows=['','','','','']; t.split('').forEach(ch=>{ const g=ART[ch]; if(!g) return; for(let i=0;i<5;i++) rows[i]+=g[i]+'  '; }); return rows; };
+  return rowsOf(top).concat([''], rowsOf(bottom)).map(r=>r.replace(/\s+$/,'')).join('\n');
+}
+const LOGO = lockup('TEOM','BOOL');
+
+const RAMP = ' .:-=+*#%@';
+function asciiSphere(answerLines, w, h){
+  w = w || 30; h = h || 14;
+  const rows = [];
+  for(let y=0;y<h;y++){
+    let row = '';
+    for(let x=0;x<w;x++){
+      const nx = (x-(w-1)/2)/((w-1)/2);
+      const ny = (y-(h-1)/2)/((h-1)/2);
+      const d = Math.sqrt(nx*nx + ny*ny);
+      if(d > 1.02){ row += ' '; continue; }
+      if(d < 0.40){ row += '@'; continue; }                  // answer window
+      const nz = Math.sqrt(Math.max(0,1-d*d));
+      const light = Math.max(0, nx*-0.34 + ny*-0.58 + nz*0.74);
+      row += RAMP[Math.min(RAMP.length-1, Math.round(light*(RAMP.length-1)))];
+    }
+    rows.push(row.replace(/\s+$/,''));
+  }
+  return rows.join('\n');
+}
+function asciiBox(lines, w){
+  w = w || 34;
+  const out = ['+'+'-'.repeat(w-2)+'+'];
+  lines.forEach(l=>{
+    let t = l.slice(0,w-4);
+    out.push('| '+t.padEnd(w-4,' ')+' |');
+  });
+  out.push('+'+'-'.repeat(w-2)+'+');
+  return out.join('\n');
+}
+function asciiPrism(word, w){
+  const h = 7, out = [];
+  for(let y=0;y<h;y++){
+    const half = Math.round((y/(h-1))*(w/2));
+    out.push(' '.repeat(w/2-half) + '/'.repeat(half*2) );
+  }
+  out.push(' '.repeat(Math.max(0,w/2-1)) + '\\' + '/');
+  return out.join('\n');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   4. STATE
+   ═══════════════════════════════════════════════════════════ */
+const KEY = 'olenri.v1';
+const state = {
+  view:'home',
+  mode:'daily',
+  threads:[],
+  topics:[],
+  settings:{speak:false,sound:true,haptic:true,hindiVoice:true},
+  current:null,
+  rack:[],
+  answerIdx:0,
+  reveal:false
+};
+
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify({mode:state.mode,threads:state.threads,topics:state.topics,settings:state.settings})); }catch(e){} }
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY); if(!raw) return;
+    const d = JSON.parse(raw);
+    state.mode = d.mode || 'daily';
+    state.threads = d.threads || [];
+    state.topics  = d.topics  || [];
+    state.settings = Object.assign(state.settings, d.settings || {});
+  }catch(e){}
+}
+
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random().toString(16).slice(2));
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ═══════════════════════════════════════════════════════════
+   5. AUDIO / HAPTICS / SPEECH
+   ═══════════════════════════════════════════════════════════ */
+let actx = null;
+function chime(){
+  if(!state.settings.sound) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const t = actx.currentTime;
+    const g = actx.createGain();
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.18, t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+1.1);
+    g.connect(actx.destination);
+    [523.25, 659.25, 987.77].forEach((f,i)=>{
+      const o = actx.createOscillator(); o.type='sine'; o.frequency.value=f;
+      o.connect(g); o.start(t+i*0.09); o.stop(t+1.15);
+    });
+  }catch(e){}
+}
+function buzz(ms){ if(state.settings.haptic && navigator.vibrate) { try{ navigator.vibrate(ms||18); }catch(e){} } }
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recog = null, listening = false;
+function toggleListen(){
+  if(!SR){ toast('इस ब्राउज़र में वॉइस इनपुट नहीं है — टाइप करो'); return; }
+  if(listening){ stopListen(); return; }
+  recog = new SR();
+  recog.lang = 'hi-IN'; recog.interimResults = true; recog.continuous = false; recog.maxAlternatives = 1;
+  recog.onstart = ()=>{ listening = true; document.getElementById('btnMic').classList.add('on'); document.getElementById('voiceHint').classList.add('on'); };
+  recog.onresult = e => {
+    let txt = '';
+    for(let i=e.resultIndex;i<e.results.length;i++) txt += e.results[i][0].transcript;
+    const input = document.getElementById('qInput');
+    input.value = txt; autoGrow(input); syncSend();
+    if(e.results[e.results.length-1].isFinal){ setTimeout(()=>{ stopListen(); input.focus(); }, 350); }
+  };
+  recog.onerror = () => { stopListen(); toast('वॉइस नहीं पकड़ पाई — फिर कोशिश करो'); };
+  recog.onend = () => { listening = false; document.getElementById('btnMic').classList.remove('on'); document.getElementById('voiceHint').classList.remove('on'); };
+  try{ recog.start(); }catch(e){}
+}
+function stopListen(){ if(recog){ try{ recog.stop(); }catch(e){} } listening=false;
+  document.getElementById('btnMic').classList.remove('on'); document.getElementById('voiceHint').classList.remove('on'); }
+
+let hindiVoice = null;
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return;
+  const vs = speechSynthesis.getVoices();
+  if(!vs.length) return;
+  hindiVoice = vs.find(v => /hi[-_]IN/i.test(v.lang)) || vs.find(v => /^hi/i.test(v.lang)) || null;
+}
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function speak(text){
+  if(!state.settings.speak || !('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'hi-IN'; u.rate = .96; u.pitch = 1;
+    if(state.settings.hindiVoice && hindiVoice) u.voice = hindiVoice;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ═══════════════════════════════════════════════════════════
+   6. TOAST / NAV
+   ═══════════════════════════════════════════════════════════ */
+let toastT = null;
+function toast(msg, good){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.toggle('good', !!good);
+  el.classList.add('on');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>el.classList.remove('on'), 2600);
+}
+const TITLES = {home:'Te\'o bool', chat:'स्पष्टता बातचीत', topics:'विषय', source:'स्रोत', settings:'सेटिंग्स'};
+function go(view, opts){
+  state.view = view;
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.dataset.view===view));
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.tab===view)));
+  document.getElementById('viewTitle').textContent = TITLES[view] || 'Te\'o bool';
+  document.getElementById('btnBack').style.visibility = (view==='home') ? 'hidden' : 'visible';
+  if(view==='home') renderHome();
+  if(view==='topics') renderTopics();
+  if(view==='source') renderSource();
+  if(view==='settings') renderSettings();
+  try{ history.pushState({view}, '', '#'+view); }catch(e){}
+}
+
+/* ═══════════════════════════════════════════════════════════
+   7. SVG ORACLE STAGE
+   ═══════════════════════════════════════════════════════════ */
+/* 3 columns × 2 rows rack + one big "hit" prism + the 8-ball.
+   viewBox 440 × 544 — sized so 11-character labels sit inside the frost. */
+const COLS = [74,220,366];
+const R1 = {apex:8, base:118};     // row 1 — points up
+const R2 = {base:128, apex:238};   // row 2 — points down
+const SP = {cx:220, apex:252, base:360, half:94};
+const SPH = {cx:220, cy:452, r:66};
+const RACK_N = 6;
+
+function triFlat(up, cx, top, bottom, half){
+  if(up) return `${cx-half},${bottom} ${cx},${top} ${cx+half},${bottom}`;
+  return `${cx-half},${top} ${cx+half},${top} ${cx},${bottom}`;
+}
+function triBevel(up, cx, top, bottom, half){
+  if(up) return `${cx-half},${bottom} ${cx+half},${bottom} ${cx+half-9},${bottom+13} ${cx-half+9},${bottom+13}`;
+  return `${cx-half+9},${top} ${cx+half-9},${top} ${cx+half-18},${top+12} ${cx-half+18},${top+12}`;
+}
+
+function renderStage(opts){
+  const {rack, answerIdx, revealed} = opts;
+  const defs = `
+  <defs>
+    <linearGradient id="ice" x1="0.1" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity=".99"/>
+      <stop offset="45%" stop-color="#EBF5FF" stop-opacity=".96"/>
+      <stop offset="100%" stop-color="#C2DCEF" stop-opacity=".93"/>
+    </linearGradient>
+    <linearGradient id="iceHot" x1="0.1" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#FFFBEF" stop-opacity=".98"/>
+      <stop offset="48%" stop-color="#FFE9AE" stop-opacity=".95"/>
+      <stop offset="100%" stop-color="#D9A64C" stop-opacity=".9"/>
+    </linearGradient>
+    <radialGradient id="ball" cx="34%" cy="24%" r="78%">
+      <stop offset="0%" stop-color="#5A6472"/>
+      <stop offset="26%" stop-color="#1B212C"/>
+      <stop offset="66%" stop-color="#080B12"/>
+      <stop offset="100%" stop-color="#000203"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFD979" stop-opacity=".5"/>
+      <stop offset="55%" stop-color="#F2C455" stop-opacity=".14"/>
+      <stop offset="100%" stop-color="#F2C455" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pool" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2E7CD6" stop-opacity=".42"/>
+      <stop offset="100%" stop-color="#2E7CD6" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation=".5"/></filter>
+    <filter id="blur2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="glowGold" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>`;
+
+  let tris = '', clips = '';
+  const put = (idx, cx, up, top, bottom, half, hit, k)=>{
+    const p = PHRASES[idx];
+    const lines = p.w;
+    const H = Math.abs(bottom-top);
+    const first = up ? top + H*0.62 : top + H*0.20;
+    const ys = lines.map((_,i)=> first + i*H*0.135);
+    const fs = hit ? 15.5 : 10.5;
+    const ts = ys.map((y,i)=>`<tspan x="${cx}" y="${y.toFixed(1)}">${esc(lines[i])}</tspan>`).join('');
+    const flat = triFlat(up,cx,top,bottom,half);
+    clips += `<clipPath id="cp${k}"><polygon points="${flat}"/></clipPath>`;
+    const face = hit ? 'url(#iceHot)' : 'url(#ice)';
+    const op = (!hit && revealed) ? .82 : 1;
+    tris += `<g opacity="${op}" style="transition:opacity .5s ease">
+      <polygon points="${flat}" fill="${face}" stroke="rgba(255,255,255,.8)" stroke-width="1.2" stroke-linejoin="round" ${hit?'filter="url(#glowGold)"':''}/>
+      <polygon points="${triBevel(up,cx,top,bottom,half)}" fill="${hit?'rgba(150,100,26,.55)':'rgba(28,72,120,.55)'}"/>
+      <g clip-path="url(#cp${k})" filter="url(#soft)">
+        <text font-family="'Baloo 2',system-ui,sans-serif" font-weight="700" font-size="${fs}" letter-spacing="${hit?.9:.5}" text-anchor="middle" fill="rgba(12,38,68,.55)" transform="translate(0,2.2)">${ts}</text>
+        <text font-family="'Baloo 2',system-ui,sans-serif" font-weight="700" font-size="${fs}" letter-spacing="${hit?.9:.5}" text-anchor="middle" fill="${hit?'#FFFDF6':'#FFFFFF'}">${ts}</text>
+      </g>
+    </g>`;
+  };
+
+  rack.forEach((idx,i)=>{
+    const col = i%3, row = Math.floor(i/3);
+    if(row===0) put(idx, COLS[col], true,  R1.apex, R1.base, 66, false, 'a'+i);
+    else       put(idx, COLS[col], false, R2.base, R2.apex, 66, false, 'b'+i);
+  });
+
+  const ans = PHRASES[answerIdx];
+  const hot = revealed;
+  const H = SP.base - SP.apex;
+  const spYs = ans.w.map((_,i)=> SP.apex + H*0.62 + i*H*0.135);
+  const spTs = spYs.map((y,i)=>`<tspan x="${SP.cx}" y="${y.toFixed(1)}">${esc(ans.w[i])}</tspan>`).join('');
+  const spFlat = triFlat(true, SP.cx, SP.apex, SP.base, SP.half);
+  clips += `<clipPath id="cpHit"><polygon points="${spFlat}"/></clipPath>`;
+
+  const stage = `
+  ${defs}
+  ${clips}
+  <ellipse cx="220" cy="150" rx="215" ry="110" fill="url(#pool)" opacity=".38"/>
+  <ellipse cx="220" cy="524" rx="92" ry="13" fill="#000" opacity=".5" filter="url(#blur2)"/>
+  <g id="rack" transform="${revealed?'translate(0,0) rotate(0)':'translate(0,-8) rotate(-2.2) scale(.95)'}" style="transform-origin:220px 120px;transition:transform .8s cubic-bezier(.22,.68,.36,1)">
+    ${tris}
+  </g>
+  ${hot?`<circle cx="${SP.cx}" cy="${SP.apex + H*0.55}" r="104" fill="url(#halo)" style="animation:pulseHalo 2.6s ease-in-out infinite"/>`:''}
+  <g opacity="${hot?1:0}" style="transition:opacity .5s ease">
+    <polygon points="${spFlat}" fill="url(#iceHot)" stroke="rgba(255,242,205,.95)" stroke-width="1.8" stroke-linejoin="round" filter="url(#glowGold)"/>
+    <polygon points="${triBevel(true,SP.cx,SP.apex,SP.base,SP.half)}" fill="rgba(150,100,26,.6)"/>
+    <g clip-path="url(#cpHit)" filter="url(#soft)">
+      <text font-family="'Baloo 2',system-ui,sans-serif" font-weight="800" font-size="15.5" letter-spacing=".9" text-anchor="middle" fill="rgba(90,50,4,.55)" transform="translate(0,2.2)">${spTs}</text>
+      <text font-family="'Baloo 2',system-ui,sans-serif" font-weight="800" font-size="15.5" letter-spacing=".9" text-anchor="middle" fill="#FFFDF6">${spTs}</text>
+    </g>
+  </g>
+  <g class="sphere" style="transform-origin:${SPH.cx}px ${SPH.cy}px;${hot?'animation:spinOnce 1.1s cubic-bezier(.2,.7,.3,1);':''}">
+    <circle cx="${SPH.cx}" cy="${SPH.cy}" r="${SPH.r}" fill="url(#ball)"/>
+    <ellipse cx="${SPH.cx-22}" cy="${SPH.cy-29}" rx="24" ry="15" fill="#fff" opacity=".11" transform="rotate(-28 ${SPH.cx-22} ${SPH.cy-29})" filter="url(#blur2)"/>
+    <circle cx="${SPH.cx}" cy="${SPH.cy}" r="${SPH.r-2}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1.2"/>
+    <circle cx="${SPH.cx}" cy="${SPH.cy}" r="33" fill="#F7FAFF"/>
+    <circle cx="${SPH.cx}" cy="${SPH.cy}" r="33" fill="none" stroke="rgba(0,0,0,.14)" stroke-width="1"/>
+    <g transform="translate(${SPH.cx},${SPH.cy})" stroke="#0A0C11" stroke-width="6.5" fill="none" stroke-linecap="round">
+      <rect x="-14" y="-27" width="28" height="23" rx="11"/>
+      <rect x="-14" y="4" width="28" height="23" rx="11"/>
+      <line x1="0" y1="-4" x2="0" y2="4"/>
+    </g>
+  </g>`;
+
+  return `<svg class="oracle-stage" viewBox="0 0 440 544" role="img" aria-label="ऑरेकल मंच: ${esc(ans.en)}">${stage}</svg>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   8. DECISION ENGINE
+   ═══════════════════════════════════════════════════════════ */
+function pickAnswer(scenario, mode){
+  if(scenario && scenario.ans != null) return scenario.ans;
+  const pool = {daily:[], emergency:[]};
+  PHRASES.forEach((p,i)=>{
+    if(p.tone==='yes'){ pool.daily.push(i); pool.emergency.push(i); }
+    else if(p.tone==='maybe'){ pool.daily.push(i); }
+    else { pool.daily.push(i); pool.emergency.push(i); }
+  });
+  const arr = pool[mode==='emergency' ? 'emergency' : 'daily'];
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+function buildSummary(q, mode){
+  const sc = SCENARIOS.find(s => s.re.test(q));
+  if(sc){
+    const opts = mode==='emergency' ? sc.opts.slice(0,1) : sc.opts;
+    return {scenario:sc.id, state:sc.state, opts, next:sc.next, follow:sc.follow};
+  }
+  const shortQ = q.length > 90 ? q.slice(0,90)+'…' : q;
+  const opts = mode==='emergency'
+    ? [{t:'जो अभी सबसे कम ऊर्जा लगे, वही करो', why:'आज रात को टीसा क्षय करो', pros:['आज रात को टीसा क्षय करो','सबसे तेज़ रास्ता','मन का बोझ हल्का'], cons:['सारे विकल्प बंद नहीं होते']}]
+    : [
+      {t:'छोटा और उलटा परीक्षण', why:'सस्ता तरीका, तेज़ सीख', pros:['सस्ता तरीका, तेज़ सीख','जल्दी शुरू हो सकता है','फ़ैसला सस्ता और कम जोखिम वाला होगा'], cons:['पूरी तस्वीर देर से मिलेगी','ग़लती में टाइम लगेगा']},
+      {t:'पूरी तैयारी के साथ सीधा कदम', why:'बड़ा परिणाम, बड़ी कीमत', pros:['बड़ा परिणाम, बड़ी कीमत','परिणाम पक्का और बड़ा होगा','मौका एक ही अच्छा मिलेगा'], cons:['तैयारी में समय और ऊर्जा लगेगी','ग़लती की कीमत ज़्यादा है']}
+    ];
+  return {
+    scenario:null,
+    state:`"${shortQ}" — अभी भी दो या ज़्यादा रास्तों के बीच बँटा हुआ है। इसका मतलब यह नहीं कि कोई रास्ता ग़लत है; मतलब यह है कि फ़ैसले को तय करने से पहले दो-तीन बातें साफ़ होनी चाहिए।`,
+    opts,
+    next:'दोनों में से कौन-सा तरीका तुम्हें सात दिन में शुरू करने जैसा लगता है? वही चुनो और बातचीत आगे बढ़ाओ।',
+    follow:'बातचीत आगे बढ़ाओ! OLENRI तुम समस्या → फ़िरसेले → अगले कदम तक ले जाएगा।'
+  };
+}
+function shuffleRack(keepIdx){
+  const all = PHRASES.map((_,i)=>i);
+  for(let i=all.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [all[i],all[j]]=[all[j],all[i]]; }
+  const rack = all.slice(0,RACK_N);
+  if(keepIdx!=null && !rack.includes(keepIdx)){
+    rack.pop();
+    rack.push(keepIdx);
+  }
+  return rack;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   9. RENDERING — chat
+   ═══════════════════════════════════════════════════════════ */
+function threadHTML(t){
+  const p = PHRASES[t.answerIdx];
+  const c = TONE_COLOR[p.tone];
+  const stage = renderStage({rack:t.rack, answerIdx:t.answerIdx, revealed:true});
+  const optsHTML = t.sum.opts.map((o,i)=>`
+    <div class="opt">
+      <div class="k">${['पहला','दूसरा','तीसरा','चौथा'][i] || (i+1)+'वाँ'} विकल्प</div>
+      <div class="title">${esc(o.t)}</div>
+      <ul class="pc pro">${(o.pros||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+      <div class="rule"></div>
+      <ul class="pc con">${(o.cons||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+    </div>`).join('');
+  return `
+  <div class="msg user"><div class="bubble-user">${esc(t.q)}</div></div>
+  <div class="msg bot">
+    <div class="msg-label">Te'o bool · ${t.mode==='emergency'?'इमरजेंसी क्वेरीटी':'डेली क्वेरीटी'}</div>
+    <div class="oracle-card" id="oracle-${t.id}">
+      ${stage}
+      <div class="motes">${Array.from({length:14},(_,i)=>`<i style="left:${(i*7+4)%100}%;top:${60+(i*13)%40}%;animation-duration:${7+(i%5)*2}s;animation-delay:${(i*0.7)%6}s"></i>`).join('')}</div>
+      <div class="verdict">
+        <div class="tone" style="color:${c}">${TONE_HI[p.tone]} · ऑरेकल ${String(t.answerIdx+1).padStart(2,'0')}/20</div>
+        <div class="hi">${esc(p.hi)}</div>
+        <div class="en">${esc(p.en)}</div>
+      </div>
+    </div>
+
+    <div class="sum">
+      <div class="block state">
+        <div class="k">गहरी बात</div>
+        <div class="body">${esc(t.sum.state)}</div>
+      </div>
+
+      <div class="block opt">
+        <div class="k">विकल्प</div>
+        ${optsHTML}
+      </div>
+
+      <div class="block next">
+        <div class="k">अगला कदम</div>
+        <div class="body">${esc(t.sum.next)}</div>
+      </div>
+
+      <button class="ask-card" data-ask="${esc(t.sum.follow)}">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.9-.9L3 20.5l1.5-4.6A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"/></svg></span>
+        <span class="txt"><b>स्पष्टता बातचीत</b><span>${esc(t.sum.follow)}</span></span>
+        <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </button>
+
+      <button class="confirm" data-done="${t.id}">हो गया</button>
+    </div>
+  </div>`;
+}
+
+function renderChat(){
+  const box = document.getElementById('chatThread');
+  if(!state.threads.length){
+    box.innerHTML = `<div style="text-align:center;padding:56px 18px;color:var(--ink-3)">
+      <div style="font-size:15px;margin-bottom:6px">अभी कोई बातचीत नहीं हुई।</div>
+      <div style="font-size:13px">नीचे अपना सवाल लिखो — Te'o bool सोचेगा और जवाब देगा।</div>
+    </div>`;
+    return;
+  }
+  box.innerHTML = state.threads.map(threadHTML).join('');
+  const sc = document.getElementById('chatScroll');
+  sc.scrollTop = sc.scrollHeight;
+}
+
+function renderHome(){
+  const list = document.getElementById('threadList');
+  const open = state.threads.filter(t=>!t.done).length;
+  document.getElementById('topicBadge').textContent = state.topics.filter(t=>!t.archived).length;
+  if(!state.threads.length){ list.innerHTML = `<div style="font-size:13px;color:var(--ink-3);padding:2px 4px">अभी कोई पुरानी बातचीत नहीं।</div>`; return; }
+  list.innerHTML = state.threads.slice(-6).reverse().map(t=>`
+    <button class="t" data-open="${t.id}">
+      <span class="q">${esc(t.q)}</span>
+      <span class="v">${esc(PHRASES[t.answerIdx].en)}</span>
+    </button>`).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   10. RENDERING — topics / source / settings
+   ═══════════════════════════════════════════════════════════ */
+function renderTopics(){
+  const box = document.getElementById('topicList');
+  const list = state.topics.filter(t=>!t.archived);
+  if(!list.length){ box.innerHTML = `<div style="color:var(--ink-3);font-size:13.5px;padding:8px 4px">कोई खुला विषय नहीं।</div>`; return; }
+  box.innerHTML = list.map(t=>{
+    const th = state.threads.find(x=>x.id===t.threadId);
+    const act = !!th && !th.done;
+    return `<div class="topic ${act?'active':''}">
+      <div class="topic-top">
+        <div class="main"><b>${esc(t.title)}</b><span>${esc(t.sub)}</span></div>
+        <div class="mark">${act?'<span class="dot"></span>':'<span style="width:8px;height:8px;border-radius:50%;background:#3a4050"></span>'}
+          ${act?'<span class="badge">1</span>':''}</div>
+      </div>
+      ${th?`<div class="tsum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span><b>${esc(PHRASES[th.answerIdx].hi)}</b> — ${esc(th.sum.next)}</span></div>`:''}
+      <div class="topic-actions">
+        <button class="taction" data-complete="${t.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>पूरा हुआ मार्क करो</button>
+        <button class="taction" data-archive="${t.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>आर्काइव करो</button>
+        <button class="taction danger" data-delete="${t.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13"/></svg>हटाओ</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderSource(){
+  const list = document.getElementById('rackList');
+  const ans = state.answerIdx;
+  list.innerHTML = PHRASES.map((p,i)=>`
+    <div class="${i===ans?'hit':''}">
+      <span class="g">${p.tone==='yes'?'▲':p.tone==='no'?'▼':'◆'}</span>
+      <span class="n">${esc(p.en)}</span>
+      <span class="t">${esc(p.hi)}</span>
+    </div>`).join('');
+  document.getElementById('srcStage').textContent = stageAscii();
+  document.getElementById('srcApis').innerHTML = apiHTML();
+}
+function stageAscii(){
+  const p = PHRASES[state.answerIdx];
+  const sph = asciiSphere(p.w, 30, 13);
+  const box = asciiBox(p.w, 34);
+  return [sph, '', box, '', asciiPrism(p.w[0], 22)].join('\n');
+}
+
+const API_LIST = [
+  ['SpeechRecognition','voice input'], ['speechSynthesis','voice output'],
+  ['Clipboard','copy'], ['Share','share sheet'], ['Vibration','haptics'],
+  ['localStorage','persistence'], ['Crypto','uuid'], ['Canvas','raster'],
+  ['History','routing'], ['Notifications','alerts']
+];
+function apiHTML(){
+  return API_LIST.map(([k,label])=>{
+    let on = false;
+    if(k==='SpeechRecognition') on = !!SR;
+    else if(k==='speechSynthesis') on = 'speechSynthesis' in window;
+    else if(k==='Clipboard') on = !!(navigator.clipboard && window.isSecureContext);
+    else if(k==='Share') on = !!navigator.share;
+    else if(k==='Vibration') on = !!navigator.vibrate;
+    else if(k==='localStorage'){ try{ localStorage.setItem('t','1'); localStorage.removeItem('t'); on=true; }catch(e){} }
+    else if(k==='Crypto') on = !!(window.crypto && crypto.randomUUID);
+    else if(k==='Canvas') on = !!document.createElement('canvas').getContext;
+    else if(k==='History') on = !!window.history.pushState;
+    else if(k==='Notifications') on = 'Notification' in window;
+    return `<div class="api ${on?'on':'off'}"><i></i>${k}</div>`;
+  }).join('');
+}
+
+function renderSettings(){
+  const s = state.settings;
+  const set=(id,v)=>document.getElementById(id).setAttribute('aria-checked', String(v));
+  set('swSpeak', s.speak); set('swSound', s.sound); set('swHaptic', s.haptic); set('swHindiVoice', s.hindiVoice);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   11. ASCII CONSOLE (rail)
+   ═══════════════════════════════════════════════════════════ */
+const LOG = [];
+function pushLog(line){ LOG.push(line); if(LOG.length>40) LOG.shift(); }
+function renderRail(){
+  document.getElementById('railLogo').textContent = LOGO;
+  document.getElementById('loadLogo').textContent = LOGO;
+  const p = PHRASES[state.answerIdx];
+  document.getElementById('railSphere').textContent = asciiSphere(p.w, 30, 13);
+  const rw = document.getElementById('railWindow');
+  rw.innerHTML = `<span>${esc(p.en)}</span><b>${esc(p.hi)}</b>`;
+  document.getElementById('railLog').textContent = LOG.slice(-9).join('\n');
+  document.getElementById('railApis').innerHTML = apiHTML();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   12. FLOW — ask → loading → answer
+   ═══════════════════════════════════════════════════════════ */
+const LOAD_STEPS = [
+  'initialising','parsing question','mapping options','weighing trade-offs',
+  'consulting sources','rendering stage','locking verdict'
+];
+const QUOTES = [
+  'Te\'o bool वह खोज रहा है जो सच में मायने रखता है।',
+  'संभावनाओं को आँकड़ा नहीं, परिस्थिति देखती है।',
+  'हर फ़ैसले का एक साफ़ रास्ता होता है — कभी-कभी दो।',
+  'जो तुम्हें परेशान कर रहा है, वही असली सवाल है।'
+];
+
+function showLoader(duration){
+  return new Promise(resolve=>{
+    const el = document.getElementById('loader');
+    const bar = document.getElementById('loadBar');
+    const pct = document.getElementById('loadPct');
+    const st  = document.getElementById('loadStatus');
+    const q   = document.getElementById('loadQuote');
+    el.classList.add('on');
+    let p = 0, step = 0;
+    const t0 = performance.now();
+    q.textContent = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+    const tick = setInterval(()=>{
+      const t = Math.min(1, (performance.now()-t0)/duration);
+      p = Math.min(100, t*100);
+      bar.style.width = p.toFixed(0)+'%';
+      pct.textContent = Math.floor(p)+'%';
+      const si = Math.min(LOAD_STEPS.length-1, Math.floor(p/100*LOAD_STEPS.length));
+      if(si!==step){ step=si; st.textContent = LOAD_STEPS[si]; }
+      if(p>=100){
+        clearInterval(tick);
+        bar.style.width='100%'; pct.textContent='100%'; st.textContent='verdict locked';
+        setTimeout(()=>{ el.classList.remove('on'); resolve(); }, 340);
+      }
+    }, 70);
+  });
+}
+
+async function ask(question){
+  const q = question.trim();
+  if(!q) return;
+  pushLog('> ' + q.slice(0,42));
+  const mode = state.mode;
+  const sum = buildSummary(q, mode);
+  const ansIdx = pickAnswer(sum.scenario ? SCENARIOS.find(s=>s.id===sum.scenario) : null, mode);
+  state.answerIdx = ansIdx;
+
+  go('chat');
+  renderChat();
+  const thread = document.getElementById('chatThread');
+  const typing = document.createElement('div');
+  typing.className = 'msg bot';
+  typing.innerHTML = `<div class="typing"><i></i><i></i><i></i></div>`;
+  thread.appendChild(typing);
+  const sc = document.getElementById('chatScroll'); sc.scrollTop = sc.scrollHeight;
+
+  await showLoader(mode==='emergency' ? 900 : 2200);
+
+  typing.remove();
+  const t = {id:uid(), q, mode, answerIdx:ansIdx, rack:shuffleRack(ansIdx), sum, done:false, ts:Date.now()};
+  state.threads.push(t);
+
+  const topicTitle = q.length>42 ? q.slice(0,42)+'…' : q;
+  state.topics.unshift({id:uid(), title:topicTitle, sub:`${PHRASES[ansIdx].en} · अभी खुला`, threadId:t.id, archived:false});
+
+  pushLog('✓ ' + PHRASES[ansIdx].en);
+  pushLog('  → ' + sum.opts.length + ' विकल्प · अगला कदम तैयार');
+  save(); renderHome(); renderRail(); renderSource(); renderChat();
+
+  chime(); buzz(22);
+  speak(PHRASES[ansIdx].hi + '। ' + sum.next);
+
+  const card = document.getElementById('oracle-'+t.id);
+  if(card) card.scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+
+/* ═══════════════════════════════════════════════════════════
+   12b. IDENTITY · API · SHARE
+   ═══════════════════════════════════════════════════════════ */
+const API_BASE = '/hi/teombool/api';
+const UID_KEY = 'teobool.uid.v1';
+
+function rand4(){
+  const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const b = new Uint8Array(4); crypto.getRandomValues(b);
+  return [...b].map(x=>c[x % c.length]).join('');
+}
+function getUid(){
+  let u = null;
+  try{ u = localStorage.getItem(UID_KEY); }catch(e){}
+  if(!u || !/^TB-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(u)){
+    u = 'TB-'+rand4()+'-'+rand4();
+    try{ localStorage.setItem(UID_KEY, u); }catch(e){}
+  }
+  return u;
+}
+const UID = getUid();
+
+async function api(path, opts){
+  opts = opts || {};
+  if(location.protocol === 'file:') return {ok:false, status:0, data:{error:'offline'}};
+  try{
+    const res = await fetch(API_BASE+path, {
+      method: opts.method || 'GET',
+      headers: opts.body ? {'content-type':'application/json'} : undefined,
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+      credentials:'same-origin'
+    });
+    const data = await res.json().catch(()=>({}));
+    return {ok: res.ok && data.ok !== false, status: res.status, data};
+  }catch(e){ return {ok:false, status:0, data:{error:'offline'}}; }
+}
+function paintUid(){
+  const el = document.getElementById('uidText'); if(el) el.textContent = UID;
+  const sh = document.getElementById('sheetUid'); if(sh) sh.textContent = UID;
+}
+
+/* ── share sheet ─────────────────────────────────────────── */
+let shareTarget = null, shareLink = '', shareAddr = '';
+function renderShareList(){
+  const box = document.getElementById('shareList');
+  const list = state.threads.slice().reverse();
+  if(!list.length){ box.innerHTML = '<div class="pick" style="justify-content:center;color:var(--ink-3)">कोई बातचीत नहीं</div>'; return; }
+  box.innerHTML = list.map((t,i)=>`
+    <button class="pick" data-share="${t.id}" aria-pressed="${i===0}">
+      <span class="q">${esc(t.q)}</span>
+      <span class="v">${esc(PHRASES[t.answerIdx].en)}</span>
+    </button>`).join('');
+  shareTarget = list[0].id;
+}
+function openSheet(){ renderShareList(); document.getElementById('sheet').classList.add('on'); }
+function closeSheet(){ document.getElementById('sheet').classList.remove('on'); }
+async function makeLink(){
+  const t = state.threads.find(x=>x.id===shareTarget) || state.threads[state.threads.length-1];
+  const linkEl = document.getElementById('sheetLink');
+  const note = document.getElementById('sheetNote');
+  if(!t){ toast('पहले कोई सवाल पूछो'); return; }
+  linkEl.textContent = 'बन रहा है…';
+  const p = PHRASES[t.answerIdx];
+  const r = await api('/share', {method:'POST', body:{
+    userId: UID,
+    title: t.q,
+    text: t.sum.state,
+    meta: { verdict: p.hi, verdictEn: p.en, next: t.sum.next }
+  }});
+  if(!r.ok){
+    linkEl.textContent = 'लिंक नहीं बना — ऐप को ऑनलाइन चाहिए';
+    note.textContent = 'यह फ़ाइल सीधे खुली है, इसलिए शेयर लिंक नहीं बन सका। डिप्लॉय किए हुए पते पर यह काम करेगा।';
+    return;
+  }
+  shareLink = r.data.shortUrl; shareAddr = r.data.addressCode;
+  linkEl.textContent = shareLink;
+  document.getElementById('sheetAddr').textContent = shareAddr;
+  note.innerHTML = 'लिंक <b>शॉर्ट</b> है। जो दूसरे IP से खोलेगा उसे पता <b>' + esc(shareAddr) + '</b> डालना पड़ेगा।';
+  pushLog('share created · ' + r.data.id);
+  toast('शॉर्ट लिंक तैयार', true);
+}
+async function doShare(){
+  const t = state.threads.find(x=>x.id===shareTarget) || state.threads[state.threads.length-1];
+  const p = t ? PHRASES[t.answerIdx] : null;
+  const text = t ? "Te'o bool · स्पष्टता का सार\n\nसवाल: " + t.q + "\nनिष्कर्ष: " + p.hi + ' (' + p.en + ')\n\n' + t.sum.state + '\n\nअगला कदम: ' + t.sum.next
+                  : "Te'o bool — स्पष्टता पाओ।";
+  const body = shareLink ? text + '\n\nशॉर्ट लिंक: ' + shareLink + '\nपता (दूसरे IP के लिए): ' + shareAddr : text;
+  if(navigator.share){ try{ await navigator.share({title:"Te'o bool — स्पष्टता का सार", text: body}); }catch(e){} }
+  else { copy(body); }
+}
+
+/* ── owner address ──────────────────────────────────────── */
+async function paintAddrState(){
+  const el = document.getElementById('addrState');
+  if(!el) return;
+  const r = await api('/state?userId=' + encodeURIComponent(UID));
+  if(r.ok && r.data.locked){
+    el.textContent = r.data.isOwner ? 'लॉक चालू — तुम्हारा IP मालिक है' : 'लॉक चालू — दूसरे IP पर पता माँगेगा';
+    el.style.color = 'var(--signal)';
+  } else if(r.status === 0){
+    el.textContent = 'ऑनलाइन नहीं — सर्वर से नहीं पूछा जा सका';
+    el.style.color = 'var(--ink-3)';
+  } else {
+    el.textContent = 'लॉक बंद है';
+    el.style.color = 'var(--ink-3)';
+  }
+}
+async function setAddress(){
+  const inp = document.getElementById('addrInput');
+  const v = inp.value.trim().toUpperCase();
+  if(!/^[A-Z0-9]{2,16}-[0-9]{4}$/.test(v)){ toast('पता ऐसा हो: NEON-4821'); return; }
+  const r = await api('/owner', {method:'POST', body:{address:v}});
+  if(r.ok){ toast('पता सेट हो गया — दूसरे IP पर पता माँगेगा', true); inp.value=''; paintAddrState(); }
+  else toast(r.data && r.data.error === 'wrong_address' ? 'पता ग़लत है' : 'पता सेट नहीं हो सका');
+}
+async function clearAddress(){
+  const inp = document.getElementById('addrInput');
+  const v = inp.value.trim().toUpperCase();
+  if(!v){ toast('पहले अपना पता डालो (हटाने की पुष्टि के लिए)'); return; }
+  const r = await api('/owner', {method:'POST', body:{address:v, disable:true}});
+  if(r.ok){ toast('लॉक हटा दिया', true); inp.value=''; paintAddrState(); }
+  else toast('पता ग़लत है');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   13. EVENTS
+   ═══════════════════════════════════════════════════════════ */
+const qInput = document.getElementById('qInput');
+function autoGrow(el){ el.style.height='auto'; el.style.height = Math.min(el.scrollHeight,110)+'px'; }
+function syncSend(){ document.getElementById('btnSend').disabled = !qInput.value.trim(); }
+
+qInput.addEventListener('input', ()=>{ autoGrow(qInput); syncSend(); });
+qInput.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); document.getElementById('btnSend').click(); }
+});
+document.getElementById('btnSend').addEventListener('click', ()=>{
+  const v = qInput.value; qInput.value=''; autoGrow(qInput); syncSend();
+  ask(v);
+});
+document.getElementById('btnMic').addEventListener('click', toggleListen);
+document.getElementById('btnVoice').addEventListener('click', ()=>{
+  go('chat'); setTimeout(()=>{ qInput.focus(); }, 120);
+  if(!SR) toast('इस ब्राउज़र में वॉइस इनपुट नहीं है — टाइप करो');
+  else toast('बोलो — नीचे माइक दबाओ और सवाल पूछो');
+});
+document.getElementById('btnClarity').addEventListener('click', ()=>{
+  go('chat'); setTimeout(()=>qInput.focus(), 120);
+});
+document.getElementById('btnOpenTopics').addEventListener('click', ()=> go('topics'));
+document.getElementById('btnBack').addEventListener('click', ()=> go('home'));
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=> go(t.dataset.tab)));
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click', ()=>{
+  state.mode = c.dataset.mode;
+  document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed', String(x===c)));
+  save();
+  toast(state.mode==='emergency' ? 'इमरजेंसी क्वेरीटी — तेज़ और सीधा फ़ैसला' : 'डेली क्वेरीटी — पूरी तरह सोचकर');
+}));
+
+document.addEventListener('click', e=>{
+  const askBtn = e.target.closest('[data-ask]');
+  if(askBtn){ qInput.value = askBtn.dataset.ask; autoGrow(qInput); syncSend(); qInput.focus(); qInput.setSelectionRange(qInput.value.length, qInput.value.length); return; }
+
+  const doneBtn = e.target.closest('[data-done]');
+  if(doneBtn){
+    const t = state.threads.find(x=>x.id===doneBtn.dataset.done);
+    if(t && !t.done){
+      t.done = true;
+      doneBtn.textContent = '✓ हो गया'; doneBtn.classList.add('done');
+      const tp = state.topics.find(x=>x.threadId===t.id);
+      if(tp){ tp.sub = `${PHRASES[t.answerIdx].en} · पूरा हुआ`; }
+      save(); renderTopics(); renderHome(); buzz(30); toast('विषय पूरा हुआ — बढ़िया', true);
+    }
+    return;
+  }
+  const openBtn = e.target.closest('[data-open]');
+  if(openBtn){
+    const t = state.threads.find(x=>x.id===openBtn.dataset.open);
+    if(t){ go('chat'); setTimeout(()=>{ const el=document.getElementById('oracle-'+t.id); if(el) el.scrollIntoView({block:'start',behavior:'smooth'}); },120); }
+    return;
+  }
+  const cmp = e.target.closest('[data-complete]');
+  if(cmp){
+    const t = state.threads.find(x=>x.id===state.topics.find(tp=>tp.id===cmp.dataset.complete)?.threadId);
+    if(t){ t.done = true; const tp = state.topics.find(x=>x.id===cmp.dataset.complete); if(tp) tp.sub = `${PHRASES[t.answerIdx].en} · पूरा हुआ`; }
+    save(); renderTopics(); toast('विषय पूरा हुआ', true); return;
+  }
+  const arc = e.target.closest('[data-archive]');
+  if(arc){ const tp = state.topics.find(x=>x.id===arc.dataset.archive); if(tp) tp.archived = true; save(); renderTopics(); toast('आर्काइव हो गया'); return; }
+  const del = e.target.closest('[data-delete]');
+  if(del){ const id = del.dataset.delete; state.topics = state.topics.filter(x=>x.id!==id); save(); renderTopics(); toast('विषय हटा दिया'); return; }
+});
+
+/* share / copy */
+document.getElementById('btnShare').addEventListener('click', openSheet);
+document.getElementById('sheetClose').addEventListener('click', closeSheet);
+document.getElementById('sheet').addEventListener('click', e=>{ if(e.target.id==='sheet') closeSheet(); });
+document.getElementById('sheetMake').addEventListener('click', makeLink);
+document.getElementById('sheetShare').addEventListener('click', doShare);
+document.getElementById('copyLink').addEventListener('click', ()=> shareLink ? copy(shareLink) : toast('पहले लिंक बनाओ'));
+document.getElementById('copyAddr').addEventListener('click', ()=> shareAddr ? copy(shareAddr) : toast('पहले लिंक बनाओ'));
+document.getElementById('copyUid').addEventListener('click', ()=> copy(UID));
+document.getElementById('uidChip').addEventListener('click', ()=>{ copy(UID); toast('user ID कॉपी हो गया', true); });
+document.getElementById('shareList').addEventListener('click', e=>{
+  const b = e.target.closest('[data-share]'); if(!b) return;
+  shareTarget = b.dataset.share;
+  document.querySelectorAll('#shareList .pick').forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+});
+document.getElementById('btnAddr').addEventListener('click', setAddress);
+document.getElementById('btnAddrOff').addEventListener('click', clearAddress);
+async function copy(text){
+  try{ await navigator.clipboard.writeText(text); toast('कॉपी हो गया', true); }
+  catch(e){
+    const ta = document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); toast('कॉपी हो गया', true); }catch(err){ toast('कॉपी नहीं हो पाया'); }
+    document.body.removeChild(ta);
+  }
+}
+
+/* settings switches */
+function bindSwitch(id, key){
+  document.getElementById(id).addEventListener('click', ()=>{
+    state.settings[key] = !state.settings[key];
+    save(); renderSettings();
+    if(key==='speak' && state.settings.speak) speak('स्पष्टता चालू है।');
+  });
+}
+bindSwitch('swSpeak','speak'); bindSwitch('swSound','sound'); bindSwitch('swHaptic','haptic'); bindSwitch('swHindiVoice','hindiVoice');
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  state.threads=[]; state.topics=[]; save(); renderHome(); renderTopics(); renderChat();
+  toast('सारा डेटा मिट गया');
+});
+
+/* keyboard + history */
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ if(listening) stopListen(); }
+});
+window.addEventListener('popstate', ()=>{ go('home'); });
+
+/* ═══════════════════════════════════════════════════════════
+   14. BOOT
+   ═══════════════════════════════════════════════════════════ */
+(function boot(){
+  load();
+  state.answerIdx = 0;
+  state.rack = shuffleRack(0);
+  document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed', String(c.dataset.mode===state.mode)));
+  renderHome(); renderChat(); renderTopics(); renderSettings(); renderSource(); renderRail();
+  pushLog('Te\'o bool clarity engine · v1.0');
+  pushLog('rack loaded · 20 phrases · ' + RACK_N + ' visible');
+  pushLog('voice api: ' + (SR ? 'ready' : 'unavailable'));
+  pushLog('idle · awaiting question');
+  paintUid();
+  renderRail();
+  api('/claim', {method:'POST', body:{userId: UID}})
+    .then(r=>{ pushLog(r.ok ? 'identity claimed · ' + UID : 'identity offline · local mode'); })
+    .catch(()=>{ pushLog('identity offline · local mode'); });
+  paintAddrState();
+  setTimeout(()=>{ const s=document.getElementById('railSphere'); if(s) s.style.opacity='1'; }, 100);
+})();
+</script>
+<style>
+@keyframes pulseHalo{0%,100%{opacity:.85;transform:scale(1);}50%{opacity:.55;transform:scale(1.06);}}
+@keyframes spinOnce{0%{transform:rotate(-8deg) scale(.9);opacity:.4;}50%{transform:rotate(6deg) scale(1.07);opacity:1;}100%{transform:rotate(0) scale(1);opacity:1;}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.loader.on{display:grid;animation:fadeIn .3s var(--ease);}
+</style>
+</body>
+</html>
