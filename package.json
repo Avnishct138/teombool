@@ -1,0 +1,15 @@
+{
+  "name": "teombool",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Te'o bool — clarity chat window served from the teom Worker, with address-gated short share links.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs && node build-standalone.mjs",
+    "deploy": "node build.mjs && wrangler deploy --keep-vars",
+    "dev": "node build.mjs && wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
