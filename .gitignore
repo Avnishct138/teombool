@@ -3,3 +3,4 @@ src/generated/
 dist/
 .wrangler/
 .dev.vars
+src/original-teom.mjs
