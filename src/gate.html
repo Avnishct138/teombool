@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Te'o bool — पता</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Mukta:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --abyss:#07080C; --panel:#101218; --line:rgba(255,255,255,.09);
+  --ink:#F4F7FB; --ink-2:#A5AEBD; --ink-3:#697283;
+  --signal:#2BE08A; --flare:#4FA3FF; --amber:#F2C455; --ember:#FF5C5C;
+  --f-display:'Baloo 2','Mukta',system-ui,sans-serif;
+  --f-body:'Mukta','Baloo 2',system-ui,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html,body{height:100%;}
+body{margin:0;background:var(--abyss);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;display:grid;place-items:center;padding:24px;overflow:hidden;}
+.bg{position:fixed;inset:0;z-index:0;background:
+  radial-gradient(130% 85% at 50% 0%, #0B1B34 0%, #070A12 45%, #05060A 100%);}
+.bg span{position:absolute;border-radius:50%;filter:blur(90px);opacity:.42}
+.o1{width:48vw;height:48vw;left:-10vw;top:-16vw;background:radial-gradient(circle,#1E5AA8,transparent 65%);}
+.o2{width:42vw;height:42vw;right:-12vw;bottom:-14vw;background:radial-gradient(circle,#0E7C6B,transparent 65%);}
+.card{position:relative;z-index:1;width:min(520px,100%);background:linear-gradient(180deg,rgba(16,18,24,.94),rgba(9,11,17,.96));
+  border:1px solid var(--line);border-radius:26px;padding:30px 26px 26px;box-shadow:0 40px 90px -40px #000;backdrop-filter:blur(14px);}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:22px;}
+.brand .sigil{width:32px;height:32px;flex:none}
+.brand b{font-family:var(--f-display);font-size:19px;font-weight:800;letter-spacing:.01em;display:block;line-height:1.1}
+.brand span{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase}
+h1{font-family:var(--f-display);font-size:29px;font-weight:800;line-height:1.2;margin:0 0 10px}
+p.lead{color:var(--ink-2);font-size:15px;margin:0 0 22px;line-height:1.6}
+.warn{display:flex;gap:11px;align-items:flex-start;background:rgba(242,196,85,.09);border:1px solid rgba(242,196,85,.35);
+  border-radius:14px;padding:12px 14px;font-size:13.5px;color:var(--ink-2);margin-bottom:20px;line-height:1.5}
+.warn b{color:var(--amber)}
+label{display:block;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:0 0 8px}
+input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 16px;font-size:20px;
+  font-family:var(--f-mono);letter-spacing:.16em;text-transform:uppercase;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus{border-color:var(--flare);box-shadow:0 0 0 3px rgba(79,163,255,.18)}
+input::placeholder{color:#4A5262;letter-spacing:.14em;font-size:15px}
+button{width:100%;margin-top:14px;min-height:54px;border-radius:999px;background:#F4F7FB;color:#08090C;font-family:var(--f-display);
+  font-size:18px;font-weight:800;border:0;cursor:pointer;transition:transform .18s,opacity .2s}
+button:active{transform:scale(.985)}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.ghost{background:rgba(255,255,255,.07);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);font-size:15px}
+.err{margin-top:12px;color:var(--ember);font-size:13.5px;font-weight:600;display:none}
+.err.on{display:block}
+.hint{margin-top:16px;font-size:12.5px;color:var(--ink-3);line-height:1.55}
+.hint code{font-family:var(--f-mono);background:rgba(255,255,255,.07);padding:2px 6px;border-radius:6px;color:var(--ink-2)}
+.shared{margin-top:4px}
+.sh-title{font-family:var(--f-display);font-size:23px;font-weight:700;line-height:1.3;margin-bottom:14px}
+.sh-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.sh-meta span{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+  border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+.sh-body{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;white-space:pre-wrap;font-size:15px;line-height:1.65;color:var(--ink)}
+.kv{display:grid;gap:10px;margin-top:14px}
+.kv .row{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 15px}
+.kv .row .k{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);font-weight:700;margin-bottom:5px}
+.kv .row .v{font-size:14.5px;line-height:1.6;color:var(--ink-2)}
+pre.ascii{margin:18px 0 0;font-family:var(--f-mono);font-size:9px;line-height:1.2;color:var(--amber);white-space:pre;overflow:hidden;opacity:.9}
+@media (max-width:520px){.card{padding:24px 18px 22px;border-radius:22px}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><span class="o1"></span><span class="o2"></span></div>
+<div class="card">
+  <div class="brand">
+    <svg class="sigil" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 2.2l1.85 6.0 6.0 1.85-6.0 1.85L12 17.9l-1.85-6.0L4.15 10.05l6.0-1.85z" fill="#F2C455"/>
+      <path d="M18.6 16.4l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z" fill="#4FA3FF"/>
+    </svg>
+    <div>
+      <b>Te'o bool</b>
+      <span>clarity engine</span>
+    </div>
+  </div>
+
+  <div id="body"></div>
+
+  <pre class="ascii" id="logo"></pre>
+</div>
+
+<script>
+const STATE = /*__STATE__*/;
+
+const LOGO = [
+' #####   ####   ####  ##  ',
+'##   ##  ##  ## ##  ## ##  ',
+'##   ##  ##  ## ##  ## ##  ',
+'##   ##  ##  ## ##  ## ##  ',
+' #####   ####   ####  ##  ',
+'',
+' #####   ####   ####  ##  ',
+'##   ##  ##  ## ##  ## ##  ',
+'##   ##  ##  ## ##  ## ##  ',
+'##   ##  ##  ## ##  ## ##  ',
+' #####   ####   ####  ##  '
+].join('\n');
+document.getElementById('logo').textContent = LOGO;
+
+const body = document.getElementById('body');
+const esc = (s) => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function renderGate(){
+  if (STATE.mode === 'missing'){
+    body.innerHTML = `
+      <h1>यह लिंक अब मौजूद नहीं</h1>
+      <p class="lead">शेयर हटा दिया गया या ७ दिन की मियाद ख़त्म हो चुकी है।</p>
+      <a class="cta" href="/hi/teombool" style="display:block;text-align:center;text-decoration:none;width:100%;min-height:54px;line-height:54px;border-radius:999px;background:#F4F7FB;color:#08090C;font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800">Te'o bool खोलो</a>`;
+    return;
+  }
+  if (STATE.mode === 'owner-gate'){
+    body.innerHTML = `
+      <h1>पता डालो</h1>
+      <p class="lead">यह इंटरफ़ेस सिर्फ़ उन्हीं के लिए है जिन्हें पता मालूम हो। नीचे अपना पता डालो।</p>
+      <div class="warn"><span>🪪</span><span>पता <b>IP से जुड़ा</b> है — एक बार डालने के बाद इस ब्राउज़र पर ३० दिन याद रहेगा।</span></div>
+      <label for="addr">पता · address</label>
+      <input id="addr" placeholder="NEON-4821" autocomplete="off" spellcheck="false" />
+      <div class="err" id="err"></div>
+      <button id="go">पता जाँचो</button>
+      <div class="hint">पता नहीं? जिसने लिंक भेजा उससे पूछ लो — वही बताएगा।</div>`;
+    wire('/hi/teombool/api/unlock', ()=>{ location.href='/hi/teombool'; });
+    return;
+  }
+  if (STATE.mode === 'granted'){
+    renderShared();
+    return;
+  }
+  body.innerHTML = `
+    <h1>पता डालो</h1>
+    <p class="lead">यह शेयर किसी और IP से खोला जा रहा है, इसलिए पता माँगा जा रहा है।</p>
+    <div class="warn"><span>🪪</span><span>जिसने शेयर किया उसने एक <b>पता</b> बनाया है — वही डालो।</span></div>
+    <label for="addr">पता · address</label>
+    <input id="addr" placeholder="NEON-4821" autocomplete="off" spellcheck="false" />
+    <div class="err" id="err"></div>
+    <button id="go">पता जाँचो</button>
+    <div class="hint">पता नहीं? जिसने लिंक भेजा उससे पूछ लो।</div>`;
+  wire('/hi/teombool/api/share/' + STATE.id, ()=>{ renderShared(); });
+}
+
+function renderShared(){
+  const m = STATE.meta || {};
+  const rows = [];
+  if (m.verdict)   rows.push(['निष्कर्ष · verdict', m.verdict]);
+  if (m.verdictEn) rows.push(['ऑरेकल · oracle', m.verdictEn]);
+  if (m.next)      rows.push(['अगला कदम · next step', m.next]);
+  body.innerHTML = `
+    <div class="shared">
+      <div class="sh-meta">
+        <span>शेयर · verified</span>
+        <span>${esc(STATE.shortUrl || '')}</span>
+      </div>
+      <div class="sh-title">${esc(STATE.title)}</div>
+      ${STATE.text ? `<div class="sh-body">${esc(STATE.text)}</div>` : ''}
+      ${rows.length ? `<div class="kv">${rows.map(r=>`<div class="row"><div class="k">${esc(r[0])}</div><div class="v">${esc(r[1])}</div></div>`).join('')}</div>` : ''}
+      <button class="ghost" id="open">Te'o bool में खोलो</button>
+    </div>`;
+  const open = document.getElementById('open');
+  if (open) open.addEventListener('click', ()=>{ location.href = '/hi/teombool?share=' + encodeURIComponent(STATE.id); });
+}
+
+function wire(endpoint, onOk){
+  const inp = document.getElementById('addr');
+  const err = document.getElementById('err');
+  const go = document.getElementById('go');
+  const submit = async ()=>{
+    const address = inp.value.trim().toUpperCase();
+    if(!address){ err.textContent='पता डालो'; err.classList.add('on'); inp.focus(); return; }
+    go.disabled = true; go.textContent='जाँच रहे हैं…';
+    try{
+      const res = await fetch(endpoint, {
+        method:'POST',
+        headers:{'content-type':'application/json'},
+        body: JSON.stringify({address})
+      });
+      const data = await res.json().catch(()=>({}));
+      if(res.ok && data.ok){ err.classList.remove('on'); onOk(); return; }
+      err.textContent = (data.error === 'wrong_address') ? 'पता ग़लत है — फिर कोशिश करो' : 'कुछ गड़बड़ हो गई';
+      err.classList.add('on');
+      go.disabled = false; go.textContent='पता जाँचो'; inp.select();
+    }catch(e){
+      err.textContent='नेटवर्क नहीं चल पाया'; err.classList.add('on');
+      go.disabled = false; go.textContent='पता जाँचो';
+    }
+  };
+  go.addEventListener('click', submit);
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); submit(); } });
+  setTimeout(()=>inp.focus(), 120);
+}
+
+renderGate();
+</script>
+</body>
+</html>
