@@ -1,0 +1,75 @@
+# ─────────────────────────────────────────────────────────────────────────
+#  Te'o bool  —  route shim for the existing `teom` Worker.
+#
+#  The `teom` Worker (1-bit model research prototype) already exists on this
+#  account and is preserved verbatim in src/original-teom.mjs. This project
+#  only adds:
+#
+#    /hi/teombool        → the Te'o bool chat window
+#    /hi/teombool/api/*  → share / owner-address / user-id API (KV backed)
+#    /s/:id              → short share link (address gated across IP changes)
+#
+#  Every other route is delegated to the original worker untouched, and the
+#  original static assets are kept byte-for-byte in public/.
+# ─────────────────────────────────────────────────────────────────────────
+name = "teom"
+main = "src/worker.js"
+compatibility_date = "2026-11-14"
+account_id = "025e2ea3d7af9e91d215fcb435ce2392"
+
+# The original site's static assets — preserved exactly as they were.
+[assets]
+directory = "public"
+binding = "ASSETS"
+html_handling = "auto-trailing-slash"
+not_found_handling = "none"
+run_worker_first = ["/", "/index.html"]
+
+# ── KV: share records + owner address ────────────────────────────────────
+[[kv_namespaces]]
+binding = "TMB_SHARES"
+id = "d9ca0e5d19014006af1f03da04a6ea0f"
+
+# ── D1: unchanged from the original worker ────────────────────────────────
+[[d1_databases]]
+binding = "DB"
+database_name = "teom-earthday-names"
+database_id = "ebea15b3-fbb5-42a9-9440-80665b7fcaf3"
+
+[[d1_databases]]
+binding = "COMMUNITY_DB"
+database_name = "teom-community"
+database_id = "1ddb3db8-05aa-4baa-924a-c27a0eee58bf"
+
+# ── Workers AI ───────────────────────────────────────────────────────────
+[ai]
+binding = "AI"
+
+# ── Rate limiters ────────────────────────────────────────────────────────
+[[ratelimits]]
+name = "CHAT_RATE_LIMITER"
+namespace_id = "913702684"
+simple = { limit = 10, period = 60 }
+
+[[ratelimits]]
+name = "COMMUNITY_RATE_LIMITER"
+namespace_id = "648312579"
+simple = { limit = 30, period = 60 }
+
+[[ratelimits]]
+name = "TMB_RL"
+namespace_id = "447120915"
+simple = { limit = 60, period = 60 }
+
+# ── Plain-text vars (unchanged from the original worker) ─────────────────
+[vars]
+AI_MODEL = "@cf/ibm-granite/granite-4.0-h-micro"
+COMMUNITY_ACCESS_AUD = "882920a6615d5e07735f50206fa1a4d17145013c66634e7c04795db9a0f7d4ed"
+COMMUNITY_ACCESS_TEAM_DOMAIN = "https://broken-art-8582.cloudflareaccess.com"
+COMMUNITY_ADMIN_EMAIL = "hexbreakeravnish@gmail.com"
+COMMUNITY_ORIGIN = "https://teom.avnishchandrathapliyal.workers.dev"
+COMMUNITY_RP_ID = "teom.avnishchandrathapliyal.workers.dev"
+COMMUNITY_TURNSTILE_HOSTNAME = "teom.avnishchandrathapliyal.workers.dev"
+COMMUNITY_TURNSTILE_SITE_KEY = "0x4AAAAAAGAsSUcsVTHdf1l0"
+
+# COMMUNITY_TURNSTILE_SECRET stays a dashboard secret — never in this file.
