@@ -23,6 +23,8 @@ Live: **https://teom.avnishchandrathapliyal.workers.dev/hi/teombool**
 | `wrangler.toml` | Bindings, assets config and rate limiters — a faithful copy of the live worker plus the new ones. |
 | `build.mjs` | Inlines `app.html` / `gate.html` into `src/generated/*.js`. |
 | `build-standalone.mjs` | Writes `dist/te-o-bool.html` — the app as one portable file you can open straight from disk. |
+| `scripts/fetch-original-assets.mjs` | Re-downloads the original static assets into `public/` — and strips the nav block the Worker injects at request time (see the gotcha below). |
+| `scripts/test-nav-injection.mjs` | Regression test: the homepage must show each nav chip exactly once. |
 
 ## Routes added
 
@@ -67,6 +69,34 @@ npx wrangler deploy --keep-vars
 The `teom` Worker is shared with an existing site, so the deploy must keep every binding and
 every asset. `public/` holds the original assets; `scripts/fetch-original-assets.mjs` can
 re-download them from the live Worker if you ever need to rebuild that directory.
+
+## ⚠️ Gotcha: the homepage nav is injected at request time
+
+The original Worker does **not** serve `public/index.html` verbatim. For `/` and `/index.html`
+it runs the asset through an `HTMLRewriter` that appends a block of nav chips to `nav.navlinks`:
+
+```js
+new HTMLRewriter()
+  .on("nav.navlinks", { element(el){ el.append(dR + fR + hR + mR + WEBOS_NAV_LINK + AGNI_NAV_LINK) } })
+  .transform(assetResponse)
+```
+
+So the file you download from the live site **already contains** that block — it is not the raw
+file on disk. Re-uploading it as-is makes the Worker inject the same chips a second time and
+every chip renders **twice** on the homepage (this happened once; it is what
+`scripts/test-nav-injection.mjs` now guards against).
+
+The fix is to store the **pristine** asset: the nav block removed. `fetch-original-assets.mjs`
+does this automatically via `stripInjectedNavChips()`, and the test asserts both that the asset
+carries no baked-in chip and that the page the Worker serves shows each chip exactly once.
+
+```bash
+node scripts/fetch-original-assets.mjs   # refresh public/ (strips the injected block)
+node scripts/test-nav-injection.mjs      # must print "All checks passed."
+```
+
+Only `/` and `/index.html` are affected — every other route either serves a static asset
+untouched or is generated inline by the Worker.
 
 ## Interactive APIs used
 
