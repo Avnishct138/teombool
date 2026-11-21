@@ -72,4 +72,11 @@ COMMUNITY_RP_ID = "teom.avnishchandrathapliyal.workers.dev"
 COMMUNITY_TURNSTILE_HOSTNAME = "teom.avnishchandrathapliyal.workers.dev"
 COMMUNITY_TURNSTILE_SITE_KEY = "0x4AAAAAAGAsSUcsVTHdf1l0"
 
+# ── AGNi Development Assistant ─────────────────────────────────────────
+# Base URL + model are not secret. The API key lives ONLY as a Worker secret:
+#   wrangler secret put AGNI_LLM_API_KEY
+# It is never committed, never in [vars], and never sent to the browser.
+AGNI_LLM_BASE_URL = "https://api.xkiro.com/v1"
+AGNI_LLM_MODEL = "mistralai/mistral-small-2603"
+
 # COMMUNITY_TURNSTILE_SECRET stays a dashboard secret — never in this file.

@@ -8,11 +8,24 @@
  *   /hi/teombool/api/*  → share / owner / user-id API (KV backed)
  *   /s/:id              → short share link (address gated across IP changes)
  *
+ * Plus the AGNi Development Assistant (added 2026-11):
+ *
+ *   /hi/agni, /hi/agni/lab → original pages + assistant panel injected
+ *   /api/agni/assistant/*  → assistant API (chat, challenge, approve, assets)
+ *
  * Everything else is delegated untouched to the original worker.
  */
 import orig from './original-teom.mjs';
 import APP_HTML from './generated/app-html.js';
 import GATE_HTML from './generated/gate-html.js';
+import {
+  handleAssistantChallenge,
+  handleAssistantChat,
+  handleAssistantApprove,
+  handleAssistantTools,
+  handleAssistantIndex,
+} from './agni/routes.mjs';
+import { withAssistant, assistantAsset, ASSISTANT_API_BASE } from './agni/inject.mjs';
 
 const APP_BASE = '/hi/teombool';
 const API_BASE = '/hi/teombool/api';
@@ -239,13 +252,43 @@ async function handleShortLink(req, env, url) {
   });
 }
 
-/* ── main router ────────────────────────────────────────── */
+const AGNI_PAGES = new Set(['/hi/agni', '/hi/agni/', '/hi/agni/lab', '/hi/agni/lab/']);
+
+async function handleAssistantApi(request, env, path) {
+  const route = path.slice(ASSISTANT_API_BASE.length) || '/';
+  if (route === '/' || route === '') return handleAssistantIndex(request);
+  if (route === '/challenge' || route === '/challenge/') return handleAssistantChallenge(request, env);
+  if (route === '/chat' || route === '/chat/') return handleAssistantChat(request, env);
+  if (route === '/approve' || route === '/approve/') return handleAssistantApprove(request, env);
+  if (route === '/tools' || route === '/tools/') return handleAssistantTools(request);
+  if (route === '/client.js' || route === '/client.js/') {
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+      return new Response('Method not allowed', { status: 405, headers: { allow: 'GET, HEAD' } });
+    }
+    return assistantAsset('js');
+  }
+  if (route === '/client.css' || route === '/client.css/') {
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+      return new Response('Method not allowed', { status: 405, headers: { allow: 'GET, HEAD' } });
+    }
+    return assistantAsset('css');
+  }
+  return new Response(JSON.stringify({ error: 'not_found' }), {
+    status: 404,
+    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+  });
+}
+
+/* ── main router ────────────────────────────────────────────────────── */
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
 
     try {
+      if (path.startsWith(ASSISTANT_API_BASE)) {
+        return await handleAssistantApi(request, env, path);
+      }
       if (path.startsWith('/s/') && request.method === 'GET') {
         return await handleShortLink(request, env, url);
       }
@@ -263,6 +306,12 @@ export default {
       }
     } catch (err) {
       return json({ ok: false, error: 'server_error', detail: String(err && err.message || err) }, 500);
+    }
+
+    // AGNi pages: keep the original Worker's markup, add the assistant panel.
+    if (AGNI_PAGES.has(path) && (request.method === 'GET' || request.method === 'HEAD')) {
+      const upstream = await orig.fetch(request, env, ctx);
+      return withAssistant(upstream);
     }
 
     return orig.fetch(request, env, ctx);

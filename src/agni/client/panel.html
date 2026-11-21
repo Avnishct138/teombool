@@ -1,0 +1,81 @@
+<!-- AGNi Development Assistant — panel markup (no script tag, no style tag).
+     Injected by the Worker into <body> of /hi/agni and /hi/agni/lab.
+     See docs/assistant-ui-contract.md — this markup is the authoritative DOM contract. -->
+<section id="agni-dev-assistant" data-agni-page="agni" aria-label="AGNi डेवलपमेंट सहायक">
+
+  <button id="agni-assistant-toggle" type="button"
+          aria-expanded="false" aria-controls="agni-assistant-panel"
+          title="AGNi डेवलपमेंट सहायक खोलें">
+    <span class="agni-assistant-toggle-emoji" aria-hidden="true">🐧</span>
+    <span class="agni-assistant-toggle-text">सहायक</span>
+  </button>
+
+  <div id="agni-assistant-panel" class="agni-assistant-panel" role="dialog"
+       aria-label="AGNi डेवलपमेंट सहायक" aria-modal="false" hidden>
+
+    <header class="agni-assistant-head">
+      <div class="agni-assistant-head-text">
+        <strong class="agni-assistant-title">AGNi डेवलपमेंट सहायक</strong>
+        <span id="agni-assistant-nexi-status" class="agni-assistant-nexi-status">NEXI · idle — तैयार है</span>
+      </div>
+      <button id="agni-assistant-close" class="agni-assistant-close" type="button"
+              aria-label="पैनल बंद करें">✕</button>
+    </header>
+
+    <p id="agni-assistant-status" class="agni-assistant-status" role="status" aria-live="polite"></p>
+
+    <div class="agni-assistant-mascot">
+      <div id="agni-assistant-nexi" class="agni-assistant-nexi" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="56" height="56" focusable="false" role="presentation">
+          <title>NEXI Penguin</title>
+          <ellipse cx="32" cy="57" rx="18" ry="4" fill="#00000033"/>
+          <ellipse cx="32" cy="34" rx="17" ry="21" fill="#142537" stroke="#69e5d0" stroke-width="1.5"/>
+          <ellipse cx="32" cy="39" rx="11" ry="15" fill="#eff8ff"/>
+          <ellipse cx="24" cy="20" rx="7" ry="8" fill="#142537" stroke="#69e5d0" stroke-width="1.5"/>
+          <ellipse cx="40" cy="20" rx="7" ry="8" fill="#142537" stroke="#69e5d0" stroke-width="1.5"/>
+          <circle cx="24" cy="20" r="2.6" fill="#eff8ff"/>
+          <circle cx="40" cy="20" r="2.6" fill="#eff8ff"/>
+          <circle cx="24.8" cy="20.8" r="1.1" fill="#07111c"/>
+          <circle cx="40.8" cy="20.8" r="1.1" fill="#07111c"/>
+          <path d="M27 27 L37 27 L32 33 Z" fill="#ffd27a"/>
+          <path d="M18 34 Q32 44 46 34" fill="none" stroke="#8ab9ff" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M22 54 q-4 2 -7 1" fill="none" stroke="#ffd27a" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M42 54 q4 2 7 1" fill="none" stroke="#ffd27a" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <div id="agni-assistant-context" class="agni-assistant-context" aria-label="प्रोजेक्ट संदर्भ"></div>
+
+    <div id="agni-assistant-tools" class="agni-assistant-tools" aria-label="tool स्थिति"></div>
+
+    <div id="agni-assistant-preview" class="agni-assistant-preview" aria-label="बदलाव preview"></div>
+
+    <div id="agni-assistant-messages" class="agni-assistant-messages"
+         role="log" aria-live="polite" aria-label="बातचीत"></div>
+
+    <form id="agni-assistant-form" class="agni-assistant-form" autocomplete="off">
+      <div class="agni-assistant-challenge">
+        <span class="agni-assistant-challenge-label">मानव जाँच</span>
+        <span id="agni-assistant-challenge-question" class="agni-assistant-challenge-question">प्रश्न लोड हो रहा है…</span>
+        <input id="agni-assistant-challenge-answer" class="agni-assistant-challenge-answer"
+               type="number" inputmode="numeric" step="any" autocomplete="off"
+               aria-label="मानव जाँच प्रश्न का उत्तर" placeholder="उत्तर">
+        <button id="agni-assistant-challenge-refresh" class="agni-assistant-challenge-refresh"
+                type="button">नया प्रश्न</button>
+      </div>
+
+      <label class="agni-assistant-teaching" for="agni-assistant-teaching-toggle">
+        <input id="agni-assistant-teaching-toggle" type="checkbox">
+        <span>शिक्षण mode</span>
+      </label>
+
+      <div class="agni-assistant-compose">
+        <textarea id="agni-assistant-input" class="agni-assistant-input" maxlength="4000"
+                  rows="3" placeholder="अपना सवाल लिखें…"
+                  aria-label="आपका संदेश"></textarea>
+        <button id="agni-assistant-send" class="agni-assistant-send" type="submit">भेजें</button>
+      </div>
+    </form>
+  </div>
+</section>

@@ -83,3 +83,35 @@ The *स्रोत* tab reports which of them are actually available in the cu
 - The ASCII art is strictly 7-bit on purpose — Google's *latin* subset ships no block or
   box-drawing glyphs, so `█` would fall back to a font with a different advance width and
   the wordmark would break.
+
+---
+
+## AGNi Development Assistant (2026-11)
+
+The AGNi pages (`/hi/agni`, `/hi/agni/lab`) now carry an integrated **development agent**
+panel instead of a plain chatbot. It thinks → plans → runs **approved AGNi tools** →
+verifies → explains, with a project-context readout, tool-execution status, change
+preview + user approval, error surfacing, the NEXI Penguin mascot and a Teaching Mode.
+
+| Path | What it is |
+|---|---|
+| `src/agni/math-core.mjs` | AGNi maths — a 1:1 mirror of the browser core in the Lab page (forward pass, activations, SGD step, 1-bit quantisation). |
+| `src/agni/tools.mjs` | The **tool registry** (name, description, input schema, validation, handler, result). This registry *is* the allow-list. |
+| `src/agni/sandbox.mjs` | Safe code execution — own tokenizer/parser/evaluator, no `eval`, whitelist + hard limits. |
+| `src/agni/context.mjs` | Project-context builder (untrusted, capped) + system prompt. |
+| `src/agni/llm.mjs` | OpenAI-compatible LLM client with a tool-calling loop (Workers AI fallback). |
+| `src/agni/proposals.mjs` | Preview → approval: KV-backed, 15 min TTL, single use. |
+| `src/agni/routes.mjs` | `/api/agni/assistant/*` endpoints. |
+| `src/agni/inject.mjs` | Injects the panel into the AGNi pages and widens the CSP by exactly one source (`'self'`). |
+| `src/agni/client/` | The UI (panel markup, styles, behaviour). |
+| `docs/AGNI-ASSISTANT.md` | Full design + security notes. |
+| `tests/` | 33 unit + integration tests (`npm test`). |
+
+The pre-existing `teom` Worker bundle stays **byte-for-byte unchanged**, the legacy
+`#agni-ai-chat` widget and `/api/chat` keep working, and no chat history is written to D1.
+
+The LLM API key lives only as the Worker secret `AGNI_LLM_API_KEY`:
+
+```bash
+npx wrangler secret put AGNI_LLM_API_KEY
+```

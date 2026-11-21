@@ -15,8 +15,10 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 // path on the live site -> file inside public/
 const FILES = [
+  // NOTE: '/jit.html' 307 → '/jit' (auto-trailing-slash). Fetch the final path so
+  // the saved file is the raw asset, not a redirect target.
+  ['/jit', 'jit.html'],
   ['/index.html', 'index.html'],
-  ['/jit.html', 'jit.html'],
   ['/robots.txt', 'robots.txt'],
   ['/metadata/jit.json', 'metadata/jit.json'],
   ['/metadata/jit.md', 'metadata/jit.md'],
@@ -27,6 +29,7 @@ for (const [urlPath, outPath] of FILES) {
   const res = await fetch(ORIGIN + urlPath, { redirect: 'follow' });
   if (!res.ok) { console.error(`skip ${urlPath} → ${res.status}`); continue; }
   const buf = Buffer.from(await res.arrayBuffer());
+  // Binary assets (PNG) must be stored raw — base64 text breaks the image.
   const dest = resolve(root, 'public', outPath);
   mkdirSync(dirname(dest), { recursive: true });
   writeFileSync(dest, buf);
