@@ -60,6 +60,13 @@ for (const [label, re] of [
   check(`original nav link "${label}" present`, re.test(inner));
 }
 
+// 2b. the Te'o bool entry point must be reachable from the homepage, exactly once
+check('homepage nav links to /hi/teombool exactly once',
+  countByHref(inner, '/hi/teombool') === 1, `found ${countByHref(inner, '/hi/teombool')}`);
+check('homepage has a hero CTA to /hi/teombool',
+  (index.match(/href="\/hi\/teombool"/g) || []).length === 2,
+  `found ${(index.match(/href="\/hi\/teombool"/g) || []).length} links (1 nav + 1 hero)`);
+
 // 3. the strip helper is idempotent and removes injected chips
 const once = stripInjectedNavChips(index);
 check('strip() on a pristine asset removes nothing', once.removed === 0, `removed ${once.removed}`);
@@ -87,6 +94,9 @@ for (const [label, href] of Object.entries(CHIP_HREFS)) {
   const n = countByHref(served, href);
   check(`served page shows "${label}" exactly once`, n === 1, `found ${n}`);
 }
+const servedNav = served.split('<nav class="navlinks"')[1].split('</nav>')[0];
+check('served nav links to /hi/teombool exactly once',
+  countByHref(servedNav, '/hi/teombool') === 1, `found ${countByHref(servedNav, '/hi/teombool')}`);
 
 // 5. pages that are never injected must be left alone
 for (const f of ['public/jit.html']) {
