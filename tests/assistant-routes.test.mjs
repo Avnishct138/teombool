@@ -271,3 +271,65 @@ test('rate limit responses surface as 429', async () => {
   const response = await handleAssistantChat(post({ message: 'नमस्ते' }), env);
   assert.equal(response.status, 429);
 });
+
+test('a user-supplied key is used and never echoed back', async () => {
+  const env = makeEnv({
+    AGNI_LLM_BASE_URL: 'https://llm.test/v1',
+    AGNI_LLM_API_KEY: 'server-secret',
+  });
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, options) => {
+    const body = JSON.parse(options.body);
+    assert.equal(body.model, 'openai/gpt-4o-mini', 'user model इस्तेमाल होना चाहिए');
+    assert.equal(options.headers.authorization, 'Bearer sk-user-key-123', 'user key इस्तेमाल होनी चाहिए');
+    return new Response(JSON.stringify({
+      choices: [{ message: { content: 'ठीक है।' } }],
+    }), { status: 200, headers: { 'content-type': 'application/json' } });
+  };
+
+  try {
+    const challenge = await fetchChallenge(env);
+    const response = await handleAssistantChat(post({
+      message: 'नमस्ते',
+      challenge: { id: challenge.id, answer: solve(challenge.question) },
+      settings: { apiKey: 'sk-user-key-123', baseUrl: 'https://llm.test/v1', model: 'openai/gpt-4o-mini' },
+    }), env);
+    const data = await response.json();
+    assert.equal(data.ok, true);
+    assert.equal(data.meta.usingUserKey, true);
+    const serialized = JSON.stringify(data);
+    assert.equal(serialized.includes('sk-user-key-123'), false, 'key response में नहीं होनी चाहिए');
+    assert.equal(serialized.includes('server-secret'), false, 'server secret भी response में नहीं होनी चाहिए');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('the server secret is used when the user sends no key', async () => {
+  const env = makeEnv({
+    AGNI_LLM_BASE_URL: 'https://llm.test/v1',
+    AGNI_LLM_API_KEY: 'server-secret',
+  });
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, options) => {
+    const body = JSON.parse(options.body);
+    assert.equal(options.headers.authorization, 'Bearer server-secret');
+    return new Response(JSON.stringify({
+      choices: [{ message: { content: 'ठीक है।' } }],
+    }), { status: 200, headers: { 'content-type': 'application/json' } });
+  };
+
+  try {
+    const challenge = await fetchChallenge(env);
+    const response = await handleAssistantChat(post({
+      message: 'नमस्ते',
+      challenge: { id: challenge.id, answer: solve(challenge.question) },
+    }), env);
+    const data = await response.json();
+    assert.equal(data.meta.usingUserKey, false);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

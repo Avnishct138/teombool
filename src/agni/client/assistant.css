@@ -452,3 +452,101 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ── settings window (own API key) ─────────────────────────── */
+
+.agni-assistant-settings-btn {
+  appearance: none;
+  border: 1px solid #3a566a;
+  border-radius: 9px;
+  background: #ffffff08;
+  color: #adbdcc;
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 4px 9px;
+  cursor: pointer;
+}
+.agni-assistant-settings-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+.agni-assistant-settings-btn.primary {
+  background: #69e5d018;
+  border-color: #69e5d0;
+  color: var(--cyan);
+  font-weight: 700;
+}
+.agni-assistant-settings-btn:disabled { opacity: 0.55; cursor: wait; }
+
+.agni-assistant-settings-window {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: #040c14cc;
+  backdrop-filter: blur(2px);
+}
+.agni-assistant-settings-window[hidden] { display: none; }
+
+.agni-assistant-settings-card {
+  width: min(440px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  padding: 18px;
+  border: 1px solid #294255;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #101d2b, #0d1825);
+  box-shadow: 0 18px 60px #0008;
+}
+.agni-assistant-settings-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+.agni-assistant-settings-note {
+  margin: 0 0 12px;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+.agni-assistant-settings-label {
+  display: block;
+  margin: 10px 0 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #dce9f5;
+}
+.agni-assistant-settings-input {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid #3a566a;
+  border-radius: 9px;
+  background: #08131f;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9rem;
+}
+.agni-assistant-settings-save {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 12px 0 6px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.agni-assistant-settings-help {
+  margin: 4px 0 0;
+  font-size: 0.79rem;
+  color: #8fa3b6;
+}
+.agni-assistant-settings-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.agni-assistant-settings-status {
+  min-height: 1.4em;
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  color: var(--cyan);
+}

@@ -149,6 +149,13 @@ export async function handleAssistantChat(request, env) {
       messages,
       tools: toolDefinitions(),
       executeTool: (name, args) => executeTool(name, args, { context, env }),
+      // A user-supplied key is honoured for this request only: it is used to
+      // call the provider, never stored, never logged and never sent back.
+      override: {
+        apiKey: typeof payload.settings?.apiKey === 'string' ? payload.settings.apiKey : '',
+        baseUrl: typeof payload.settings?.baseUrl === 'string' ? payload.settings.baseUrl : '',
+        model: typeof payload.settings?.model === 'string' ? payload.settings.model : '',
+      },
     });
 
     // Collect a proposal from the tool round (if any) and persist it server side.
@@ -172,9 +179,13 @@ export async function handleAssistantChat(request, env) {
     const errors = [...warnings];
     if (turn.error) errors.push(turn.error);
 
+    // When the provider failed, the error bubble carries the message — do not
+    // add a generic "no answer" line on top of it.
     const reply = turn.reply && turn.reply.trim()
       ? turn.reply.trim()
-      : 'मैं इस संदेश पर कोई उत्तर नहीं बना पाया। दूसरी कोशिश करें या Teaching Mode में "क्यों" पूछें।';
+      : (turn.error
+        ? ''
+        : 'मैं इस संदेश पर कोई उत्तर नहीं बना पाया। दूसरी कोशिश करें या Teaching Mode में "क्यों" पूछें।');
 
     const teaching = teachingMode
       ? buildTeachingNote(turn, context)
@@ -194,7 +205,12 @@ export async function handleAssistantChat(request, env) {
       })),
       proposal,
       errors,
-      meta: { model: turn.model, mode: turn.mode },
+      meta: {
+        model: turn.model,
+        mode: turn.mode,
+        // only whether a user key was used — never the key itself
+        usingUserKey: Boolean(turn.usingUserKey),
+      },
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

@@ -30,6 +30,22 @@ Worker (src/worker.js — existing teombool shim)
         └─ math-core.mjs → AGNi maths (browser core का 1:1 mirror)
 ```
 
+### अपनी API key (settings window)
+
+पैनल header में ⚙ बटन → **API सेटिंग्स** window:
+
+| Field | क्या करता है |
+|---|---|
+| **API key** | आपकी अपनी key (OpenAI-compatible) — खाली छोड़ने पर Worker का secret इस्तेमाल होता है |
+| **Provider** | allow-listed base URL (xKiro, OpenAI, MiniMax, Groq, DeepSeek, OpenRouter) |
+| **Model** | model id, e.g. `mistralai/mistral-small-2603` |
+| **इस browser में सेव करें** | default **बंद** — key सिर्फ़ page session में रहती है (reload पर मिट जाती है); चेक करने पर `localStorage` में रहती है |
+
+Key सिर्फ़ chat request के साथ server को जाती है — server उसे **सेव, लॉग या browser वापस नहीं**
+करता (response में सिर्फ़ `meta.usingUserKey: true/false` आता है), और error message से भी scrub
+हो जाती है। Provider URL allow-list में है, ताकि browser से दी गई किसी भी URL पर server request
+न कर सके (SSRF guard)।
+
 ### Files
 
 | File | भूमिका |
@@ -43,7 +59,7 @@ Worker (src/worker.js — existing teombool shim)
 | `src/agni/proposals.mjs` | preview → approval (KV, 15 min TTL, single use) |
 | `src/agni/routes.mjs` | HTTP handlers |
 | `src/agni/inject.mjs` | page injection + CSP widening |
-| `src/agni/client/*` | UI: panel, styles, behaviour |
+| `src/agni/client/*` | UI: panel, styles, behaviour (chat + settings window) |
 | `tests/*.test.mjs` | 33 unit + integration tests (`node --test`) |
 
 ---

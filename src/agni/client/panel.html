@@ -18,9 +18,60 @@
         <strong class="agni-assistant-title">AGNi डेवलपमेंट सहायक</strong>
         <span id="agni-assistant-nexi-status" class="agni-assistant-nexi-status">NEXI · idle — तैयार है</span>
       </div>
+      <button id="agni-assistant-settings" class="agni-assistant-settings-btn" type="button"
+              aria-label="API सेटिंग्स खोलें" title="API सेटिंग्स (अपनी API key)">⚙</button>
       <button id="agni-assistant-close" class="agni-assistant-close" type="button"
               aria-label="पैनल बंद करें">✕</button>
     </header>
+
+    <!-- Settings window: user drops in their own API key (optional) -->
+    <div id="agni-assistant-settings-window" class="agni-assistant-settings-window"
+         role="dialog" aria-modal="true" aria-labelledby="agni-assistant-settings-title" hidden>
+      <div class="agni-assistant-settings-card">
+        <h2 id="agni-assistant-settings-title" class="agni-assistant-settings-title">API सेटिंग्स</h2>
+
+        <p class="agni-assistant-settings-note">
+          अपनी <strong>API key</strong> यहाँ डालें — इससे सहायक आपके provider (OpenAI-compatible) से बात करेगी।
+          खाली छोड़ने पर Worker का अपना secret इस्तेमाल होगा।
+        </p>
+
+        <label class="agni-assistant-settings-label" for="agni-assistant-api-key">API key</label>
+        <input id="agni-assistant-api-key" class="agni-assistant-settings-input" type="password"
+               autocomplete="off" spellcheck="false" placeholder="sk-…"
+               aria-describedby="agni-assistant-api-key-help" />
+
+        <label class="agni-assistant-settings-label" for="agni-assistant-base-url">Provider (base URL)</label>
+        <select id="agni-assistant-base-url" class="agni-assistant-settings-input">
+          <option value="">Worker default (server secret)</option>
+          <option value="https://api.xkiro.com/v1">xKiro</option>
+          <option value="https://api.openai.com/v1">OpenAI</option>
+          <option value="https://api.minimax.io/v1">MiniMax</option>
+          <option value="https://api.groq.com/openai/v1">Groq</option>
+          <option value="https://api.deepseek.com/v1">DeepSeek</option>
+          <option value="https://openrouter.ai/api/v1">OpenRouter</option>
+        </select>
+
+        <label class="agni-assistant-settings-label" for="agni-assistant-model">Model</label>
+        <input id="agni-assistant-model" class="agni-assistant-settings-input" type="text"
+               autocomplete="off" spellcheck="false" placeholder="mistralai/mistral-small-2603" />
+
+        <label class="agni-assistant-settings-save">
+          <input id="agni-assistant-save-key" type="checkbox" />
+          <span>इस browser में सेव करें (localStorage) — बंद रखने पर key सिर्फ़ इस session में रहेगी</span>
+        </label>
+
+        <p id="agni-assistant-api-key-help" class="agni-assistant-settings-help">
+          Key सिर्फ़ आपके chat request के साथ server को भेजी जाती है — server उसे सेव, लॉग या आपके browser वापस नहीं करता।
+        </p>
+
+        <div class="agni-assistant-settings-actions">
+          <button id="agni-assistant-settings-save" class="agni-assistant-settings-btn primary" type="button">सेव करें</button>
+          <button id="agni-assistant-settings-clear" class="agni-assistant-settings-btn" type="button">हटाएँ</button>
+          <button id="agni-assistant-settings-close" class="agni-assistant-settings-btn" type="button">बंद करें</button>
+        </div>
+        <p id="agni-assistant-settings-status" class="agni-assistant-settings-status" role="status" aria-live="polite"></p>
+      </div>
+    </div>
 
     <p id="agni-assistant-status" class="agni-assistant-status" role="status" aria-live="polite"></p>
 

@@ -51,6 +51,14 @@ Inside it:
 | `agni-assistant-teaching-toggle` | checkbox that enables Teaching Mode |
 | `agni-assistant-nexi` | container for the NEXI Penguin mascot (SVG) |
 | `agni-assistant-nexi-status` | text line under the mascot (what NEXI is doing) |
+| `agni-assistant-settings` | button that opens the settings window |
+| `agni-assistant-settings-window` | the settings window (hidden by default) |
+| `agni-assistant-api-key` | password input for the user's own API key |
+| `agni-assistant-base-url` | provider select (allow-listed base URLs only) |
+| `agni-assistant-model` | model id input |
+| `agni-assistant-save-key` | checkbox: persist the key in localStorage (default off) |
+| `agni-assistant-settings-save` / `-clear` / `-close` | save / clear / close buttons |
+| `agni-assistant-settings-status` | status line inside the settings window |
 
 Message bubbles use `data-role="user" | "assistant" | "system"` and `data-error="true"` on errors.
 
@@ -79,9 +87,13 @@ Request:
     "weights": { "w1": [[...]], "b1": [...], "w2": [[...]], "b2": [...] },
     "projectState": { "lastRun": "...", "hasRun": true, "dirty": false }
   },
-  "history": [{ "role": "user" | "assistant", "content": "..." }]
+  "history": [{ "role": "user" | "assistant", "content": "..." }],
+  "settings": { "apiKey": "sk-…", "baseUrl": "https://api.xkiro.com/v1", "model": "mistralai/mistral-small-2603" }
 }
 ```
+
+`settings` is optional. `apiKey` is used for that request only — it is never stored, never logged
+and never returned; `baseUrl` is ignored unless it is on the provider allow-list.
 
 Response:
 

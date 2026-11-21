@@ -22,6 +22,52 @@
   var hasRun = false;
   var runObserver = null;
 
+  /* ── user API settings (optional, never sent back to the browser) ── */
+  var STORAGE_KEY = 'agni-assistant-settings';
+  var userSettings = { apiKey: '', baseUrl: '', model: '', persisted: false };
+
+  function loadUserSettings() {
+    try {
+      var raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      var parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        userSettings.apiKey = typeof parsed.apiKey === 'string' ? parsed.apiKey : '';
+        userSettings.baseUrl = typeof parsed.baseUrl === 'string' ? parsed.baseUrl : '';
+        userSettings.model = typeof parsed.model === 'string' ? parsed.model : '';
+        userSettings.persisted = parsed.persisted === true;
+      }
+    } catch (err) {
+      userSettings = { apiKey: '', baseUrl: '', model: '', persisted: false };
+    }
+  }
+
+  function persistUserSettings() {
+    try {
+      if (!userSettings.persisted) {
+        window.localStorage.removeItem(STORAGE_KEY);
+        return;
+      }
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        apiKey: userSettings.apiKey,
+        baseUrl: userSettings.baseUrl,
+        model: userSettings.model,
+        persisted: true
+      }));
+    } catch (err) {
+      /* storage unavailable (private mode) — keep the key in memory only */
+      userSettings.persisted = false;
+    }
+  }
+
+  function settingsPayload() {
+    var payload = {};
+    if (userSettings.apiKey) payload.apiKey = userSettings.apiKey;
+    if (userSettings.baseUrl) payload.baseUrl = userSettings.baseUrl;
+    if (userSettings.model) payload.model = userSettings.model;
+    return payload;
+  }
+
   /* ── tiny helpers ─────────────────────────────────────── */
 
   function byId(id) { return document.getElementById(id); }
@@ -337,6 +383,8 @@
       var section = context.projectState ? context.projectState.section : null;
       addChip(section ? ('दृश्यमान section: ' + section) : 'दृश्यमान section: अज्ञात');
     }
+    addChip(userSettings.apiKey ? 'API key: आपकी key' : 'API key: server secret',
+      !userSettings.apiKey);
   }
 
   /* ── tool rows ────────────────────────────────────────── */
@@ -617,7 +665,8 @@
       page: page,
       teachingMode: dom.teaching.checked === true,
       context: context,
-      history: nextHistory.slice(-8)
+      history: nextHistory.slice(-8),
+      settings: settingsPayload()
     })
       .then(function (data) {
         data = data || {};
@@ -628,8 +677,11 @@
         }
         renderToolCalls(data.toolCalls);
 
-        var reply = typeof data.reply === 'string' && data.reply ? data.reply : 'कोई जवाब नहीं मिला।';
-        addBubble('assistant', reply, {});
+        var hasErrors = !!(data.errors && data.errors.length);
+        var reply = typeof data.reply === 'string' && data.reply
+          ? data.reply
+          : (hasErrors ? '' : 'कोई जवाब नहीं मिला।');
+        if (reply) addBubble('assistant', reply, {});
         if (typeof data.teaching === 'string' && data.teaching) {
           addBubble('system', data.teaching, { teaching: true });
         }
@@ -697,6 +749,16 @@
     dom.tools = byId('agni-assistant-tools');
     dom.preview = byId('agni-assistant-preview');
     dom.teaching = byId('agni-assistant-teaching-toggle');
+    dom.settingsBtn = byId('agni-assistant-settings');
+    dom.settingsWindow = byId('agni-assistant-settings-window');
+    dom.settingsClose = byId('agni-assistant-settings-close');
+    dom.settingsSave = byId('agni-assistant-settings-save');
+    dom.settingsClear = byId('agni-assistant-settings-clear');
+    dom.apiKey = byId('agni-assistant-api-key');
+    dom.baseUrl = byId('agni-assistant-base-url');
+    dom.model = byId('agni-assistant-model');
+    dom.saveKey = byId('agni-assistant-save-key');
+    dom.settingsStatus = byId('agni-assistant-settings-status');
     dom.nexi = byId('agni-assistant-nexi');
     dom.nexiStatus = byId('agni-assistant-nexi-status');
   }
@@ -709,6 +771,55 @@
       renderContextChips(buildContext());
       if (dom.input) dom.input.focus();
     }
+  }
+
+
+  /* ── settings window (own API key / provider / model) ────── */
+
+  function openSettings(open) {
+    if (!dom.settingsWindow) return;
+    if (open) {
+      if (dom.apiKey) dom.apiKey.value = userSettings.apiKey || '';
+      if (dom.baseUrl) dom.baseUrl.value = userSettings.baseUrl || '';
+      if (dom.model) dom.model.value = userSettings.model || '';
+      if (dom.saveKey) dom.saveKey.checked = userSettings.persisted === true;
+      if (dom.settingsStatus) {
+        dom.settingsStatus.textContent = userSettings.apiKey
+          ? 'आपकी key इस्तेमाल हो रही है।'
+          : 'अभी Worker का server secret इस्तेमाल हो रहा है।';
+      }
+      dom.settingsWindow.hidden = false;
+      if (dom.apiKey) { try { dom.apiKey.focus(); } catch (err) { /* ignore */ } }
+    } else {
+      dom.settingsWindow.hidden = true;
+    }
+  }
+
+  function saveSettings() {
+    userSettings.apiKey = dom.apiKey ? String(dom.apiKey.value || '').trim() : '';
+    userSettings.baseUrl = dom.baseUrl ? String(dom.baseUrl.value || '') : '';
+    userSettings.model = dom.model ? String(dom.model.value || '').trim() : '';
+    userSettings.persisted = dom.saveKey ? dom.saveKey.checked === true : false;
+    persistUserSettings();
+    if (dom.settingsStatus) {
+      dom.settingsStatus.textContent = userSettings.apiKey
+        ? (userSettings.persisted
+          ? 'Key सेव हो गई (localStorage) और अगले request से इस्तेमाल होगी।'
+          : 'Key सिर्फ़ इस session में रहेगी (पेज reload करने पर मिट जाएगी)।')
+        : 'Key हटा दी गई — अब Worker का server secret इस्तेमाल होगा।';
+    }
+    renderContextChips(buildContext());
+  }
+
+  function clearSettings() {
+    userSettings = { apiKey: '', baseUrl: '', model: '', persisted: false };
+    persistUserSettings();
+    if (dom.apiKey) dom.apiKey.value = '';
+    if (dom.baseUrl) dom.baseUrl.value = '';
+    if (dom.model) dom.model.value = '';
+    if (dom.saveKey) dom.saveKey.checked = false;
+    if (dom.settingsStatus) dom.settingsStatus.textContent = 'सभी सेटिंग्स हटा दी गईं।';
+    renderContextChips(buildContext());
   }
 
   function init() {
@@ -732,6 +843,26 @@
     dom.challengeRefresh.addEventListener('click', function () {
       if (!busy) loadChallenge();
     });
+    if (dom.settingsBtn) {
+      dom.settingsBtn.addEventListener('click', function () { openSettings(true); });
+    }
+    if (dom.settingsClose) {
+      dom.settingsClose.addEventListener('click', function () { openSettings(false); });
+    }
+    if (dom.settingsSave) {
+      dom.settingsSave.addEventListener('click', function () { saveSettings(); });
+    }
+    if (dom.settingsClear) {
+      dom.settingsClear.addEventListener('click', function () { clearSettings(); });
+    }
+    if (dom.settingsWindow) {
+      dom.settingsWindow.addEventListener('click', function (event) {
+        if (event.target === dom.settingsWindow) openSettings(false);
+      });
+    }
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && dom.settingsWindow && !dom.settingsWindow.hidden) openSettings(false);
+    });
     dom.form.addEventListener('submit', function (event) {
       event.preventDefault();
       sendMessage();
@@ -743,6 +874,7 @@
       }
     });
 
+    loadUserSettings();
     setNexi('idle');
     addSystem('नमस्ते! मैं NEXI हूँ—AGNi के weights, activation और forward pass पर मदद करता हूँ। अपना सवाल लिखें।');
     renderContextChips(buildContext());

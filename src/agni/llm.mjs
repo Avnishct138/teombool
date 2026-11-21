@@ -19,15 +19,60 @@ export const FALLBACK_MODELS = [
   'cohere/command-a',
 ];
 
+/**
+ * Providers a browser-supplied key may be used against.
+ *
+ * The Worker fetches this URL on the user's behalf, so an arbitrary URL would
+ * be a server-side request forgery hole (and could be pointed at Cloudflare's
+ * own metadata endpoints). Only these known, public, https endpoints are
+ * accepted; anything else falls back to the Worker-configured provider.
+ */
+export const PROVIDER_ALLOWLIST = [
+  { baseUrl: 'https://api.xkiro.com/v1', label: 'xKiro (OpenAI-compatible)' },
+  { baseUrl: 'https://api.openai.com/v1', label: 'OpenAI' },
+  { baseUrl: 'https://api.minimax.io/v1', label: 'MiniMax' },
+  { baseUrl: 'https://api.groq.com/openai/v1', label: 'Groq' },
+  { baseUrl: 'https://api.deepseek.com/v1', label: 'DeepSeek' },
+  { baseUrl: 'https://openrouter.ai/api/v1', label: 'OpenRouter' },
+];
+
 const MAX_TOOL_ROUNDS = 4;
 const REQUEST_TIMEOUT_MS = 45000;
 
-export function llmConfig(env) {
-  const baseUrl = (env.AGNI_LLM_BASE_URL || DEFAULT_BASE_URL).replace(/\/+$/, '');
-  const apiKey = typeof env.AGNI_LLM_API_KEY === 'string' ? env.AGNI_LLM_API_KEY.trim() : '';
-  const primary = env.AGNI_LLM_MODEL || DEFAULT_MODEL;
+/** Is this base URL one we are willing to fetch on the caller's behalf? */
+export function isAllowedBaseUrl(baseUrl, env) {
+  if (typeof baseUrl !== 'string' || !baseUrl.trim()) return false;
+  let url;
+  try {
+    url = new URL(baseUrl.trim());
+  } catch {
+    return false;
+  }
+  if (url.protocol !== 'https:') return false;
+  const configured = env?.AGNI_LLM_BASE_URL || DEFAULT_BASE_URL;
+  const allowed = new Set();
+  for (const base of [...PROVIDER_ALLOWLIST.map((p) => p.baseUrl), configured]) {
+    try { allowed.add(new URL(base).origin); } catch { /* ignore malformed */ }
+  }
+  return allowed.has(url.origin);
+}
+
+/**
+ * Resolve the effective LLM configuration.
+ * A browser-supplied key is used for that one request only — it is never
+ * written to storage, never logged and never returned to the browser.
+ */
+export function llmConfig(env, override = {}) {
+  const configured = (env.AGNI_LLM_BASE_URL || DEFAULT_BASE_URL).replace(/\/+$/, '');
+  const overrideUrl = typeof override.baseUrl === 'string' ? override.baseUrl.trim().replace(/\/+$/, '') : '';
+  const baseUrl = overrideUrl && isAllowedBaseUrl(overrideUrl, env) ? overrideUrl : configured;
+
+  const overrideKey = typeof override.apiKey === 'string' ? override.apiKey.trim() : '';
+  const apiKey = overrideKey || (typeof env.AGNI_LLM_API_KEY === 'string' ? env.AGNI_LLM_API_KEY.trim() : '');
+
+  const primary = (typeof override.model === 'string' && override.model.trim()) || env.AGNI_LLM_MODEL || DEFAULT_MODEL;
   const models = [primary, ...FALLBACK_MODELS.filter((m) => m !== primary)];
-  return { baseUrl, apiKey, primary, models };
+  return { baseUrl, apiKey, primary, models, usingUserKey: Boolean(overrideKey) };
 }
 
 async function postJson(url, body, headers, timeoutMs = REQUEST_TIMEOUT_MS) {
@@ -53,8 +98,8 @@ async function postJson(url, body, headers, timeoutMs = REQUEST_TIMEOUT_MS) {
  * One chat-completions call.
  * @returns {{ok:boolean, content:string, toolCalls:Array, model:string, error?:string, status?:number}}
  */
-export async function chatCompletion({ env, messages, tools, model, temperature = 0.3, maxTokens = 1200 }) {
-  const config = llmConfig(env);
+export async function chatCompletion({ env, messages, tools, model, temperature = 0.3, maxTokens = 1200, override }) {
+  const config = llmConfig(env, override);
   const body = { model, messages, temperature, max_tokens: maxTokens };
   if (tools && tools.length) body.tools = tools;
   body.tool_choice = 'auto';
@@ -67,7 +112,7 @@ export async function chatCompletion({ env, messages, tools, model, temperature 
 
   if (!result.ok) {
     const message = result.data?.error?.message || result.text?.slice(0, 300) || `HTTP ${result.status}`;
-    return { ok: false, content: '', toolCalls: [], model, error: message, status: result.status };
+    return { ok: false, content: '', toolCalls: [], model, error: scrubKey(message, config.apiKey), status: result.status };
   }
 
   const message = result.data?.choices?.[0]?.message;
@@ -83,6 +128,13 @@ export async function chatCompletion({ env, messages, tools, model, temperature 
     model,
     usage: result.data?.usage || null,
   };
+}
+
+/** Never let a key leak into an error message that goes back to the browser. */
+function scrubKey(text, key) {
+  let out = String(text || '');
+  if (key && out.includes(key)) out = out.split(key).join('[key]');
+  return out.replace(/sk-[A-Za-z0-9._-]{8,}/g, '[key]');
 }
 
 function parseArguments(raw) {
@@ -105,8 +157,8 @@ function parseArguments(raw) {
  * @param {Array}  options.tools    OpenAI-style tool descriptors
  * @param {Function} options.executeTool  async (name, args) => tool outcome
  */
-export async function runAssistantTurn({ env, messages, tools, executeTool }) {
-  const config = llmConfig(env);
+export async function runAssistantTurn({ env, messages, tools, executeTool, override }) {
+  const config = llmConfig(env, override);
   const toolCalls = [];
   const conversation = [...messages];
   let lastError = '';
@@ -122,6 +174,7 @@ export async function runAssistantTurn({ env, messages, tools, executeTool }) {
       model: workersAi.model,
       mode: 'workers-ai',
       error: workersAi.error,
+      usingUserKey: false,
     };
   }
 
@@ -129,7 +182,7 @@ export async function runAssistantTurn({ env, messages, tools, executeTool }) {
     let response = null;
     let lastFailure = '';
     for (const model of config.models) {
-      response = await chatCompletion({ env, messages: conversation, tools, model });
+      response = await chatCompletion({ env, messages: conversation, tools, model, override });
       if (response.ok) { usedModel = model; break; }
       lastFailure = response.error || 'LLM call failed';
       // 401/403 = key or plan problem: trying another model will not help.
@@ -147,6 +200,7 @@ export async function runAssistantTurn({ env, messages, tools, executeTool }) {
         model: usedModel,
         mode,
         error: lastError || undefined,
+        usingUserKey: config.usingUserKey,
       };
     }
 
@@ -186,7 +240,7 @@ export async function runAssistantTurn({ env, messages, tools, executeTool }) {
   }
 
   // Tool loop exhausted — ask for a final answer without tools.
-  const final = await chatCompletion({ env, messages: conversation, tools: null, model: usedModel });
+  const final = await chatCompletion({ env, messages: conversation, tools: null, model: usedModel, override });
   return {
     reply: final.ok ? final.content : '',
     toolCalls,
@@ -194,6 +248,7 @@ export async function runAssistantTurn({ env, messages, tools, executeTool }) {
     mode,
     error: lastError || (final.ok ? undefined : final.error),
     truncated: true,
+    usingUserKey: config.usingUserKey,
   };
 }
 
